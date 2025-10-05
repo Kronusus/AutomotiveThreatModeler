@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# Automotive Threat Modeler
 
-First, run the development server:
+Automotive Threat Modeler is a Next.js web application to assist automotive cybersecurity architects in performing Gemini AI-assisted STRIDE threat modeling for vehicle features according to ISO 21434. No authentication or database is required; all data is held in client memory for the session.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Enter a use case (e.g., "Brake the vehicle using foot pedal")
+- Define an abstract effect chain (input, behavior, output)
+- Describe systems (inputs, outputs, interfaces)
+- Generate editable node-link diagrams (Mermaid format) via Gemini AI
+- Refine data or directly edit the diagram
+- Perform STRIDE-based threat modeling under ISO 21434
+- View results in a table (assets, properties, threats, reasoning, damage scenarios)
+- Export results to PDF or CSV
+- Modern, clean UI with Tailwind CSS
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Clone the repository:
+	```bash
+	git clone https://github.com/Kronusus/AutomotiveThreatModeler.git
+	cd AutomotiveThreatModeler
+	```
+2. Install dependencies:
+	```bash
+	pnpm install
+	# or npm install / yarn install
+	```
+3. Add your Gemini API key to `.env`:
+	```env
+	GEMINI_API_KEY=your-gemini-api-key-here
+	```
+4. Start the development server:
+	```bash
+	pnpm dev
+	# or npm run dev / yarn dev
+	```
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Learn More
+## Usage
 
-To learn more about Next.js, take a look at the following resources:
+1. Fill out the use case, effect chain, and systems forms
+2. Click **Generate Visualization** to create a diagram
+3. Edit/refine the diagram as needed
+4. Click **Perform Threat Modeling** to analyze threats
+5. View results and export as PDF/CSV
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Environment Variables
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `GEMINI_API_KEY`: Your Gemini API key (required for AI features)
 
-## Deploy on Vercel
+## Technologies
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Next.js (App Router, TypeScript)
+- Tailwind CSS
+- mermaid, mermaid-react (diagram rendering)
+- Google Generative AI (Gemini)as
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+Distributed under the GNU Affero General Public License v3. See `LICENSE` for details.
