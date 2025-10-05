@@ -5,13 +5,13 @@ import { validateThreatModel } from "../../../lib/validateThreatModel";
 export async function POST(req: NextRequest) {
   try {
     const { useCase, effectChain, systems, diagram } = await req.json();
-  // Prompt für Gemini
-  const prompt = `Führe eine STRIDE Threat Modeling Analyse nach ISO 21434 für folgende Fahrzeugfunktion durch. Use Case: ${useCase}, Effektkette: ${effectChain}, Systeme: ${JSON.stringify(systems)}, Diagramm: ${diagram}. Gib die Ergebnisse als JSON-Array mit Feldern asset, property, stride, reasoning, damage zurück. Kategorisiere damage als Safety, Operational, Privacy oder Financial. Antworte ausschließlich mit rohem JSON ohne jegliche Formatierung, Codeblöcke oder Markdown.`;
+  // Prompt for Gemini
+  const prompt = `Perform a STRIDE threat modeling analysis according to ISO 21434 for the following vehicle function. Use Case: ${useCase}, Effect Chain: ${effectChain}, Systems: ${JSON.stringify(systems)}, Diagram: ${diagram}. Return the results as a JSON array with the fields asset, property, stride, reasoning, damage. Categorize damage as Safety, Operational, Privacy, or Financial. Respond exclusively with raw JSON without any formatting, code blocks, or markdown.`;
     const geminiRes = await getGeminiResponse(prompt);
     // Accept both { results: [...] } and [...] formats
     let results = Array.isArray(geminiRes) ? geminiRes : geminiRes.results;
     if (!validateThreatModel(results)) {
-      return NextResponse.json({ success: false, error: "Ungültiges Ergebnisformat" });
+      return NextResponse.json({ success: false, error: "Invalid result format" });
     }
     return NextResponse.json({ success: true, results });
   } catch (e: any) {
