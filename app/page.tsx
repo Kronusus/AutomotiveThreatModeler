@@ -28,7 +28,7 @@ export default function HomePage() {
         body: JSON.stringify({ useCase, effectChain, systems }),
       });
       const data = await res.json();
-      if (!data.success) throw new Error(data.error || "Fehler bei der Visualisierung");
+      if (!data.success) throw new Error(data.error || "Error during visualization");
       setDiagram(data.diagram);
     } catch (e: any) {
       setDiagramError(e.message);
@@ -47,7 +47,7 @@ export default function HomePage() {
         body: JSON.stringify({ useCase, effectChain, systems, diagram }),
       });
       const data = await res.json();
-      if (!data.success) throw new Error(data.error || "Fehler bei der Threat Modeling Analyse");
+      if (!data.success) throw new Error(data.error || "Error during threat modeling analysis");
       setResults(data.results);
     } catch (e: any) {
       setResultsError(e.message);
@@ -71,7 +71,7 @@ export default function HomePage() {
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (e) {
-      alert("Export fehlgeschlagen");
+      alert("Export failed");
     }
   };
 

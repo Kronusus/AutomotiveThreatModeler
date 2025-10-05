@@ -59,12 +59,12 @@ export const SystemsForm: React.FC<SystemsFormProps> = ({ systems, onChange }) =
             rows={2}
           />
           <button className="btn btn-error btn-sm" onClick={() => removeSystem(idx)}>
-            Entfernen
+            Remove
           </button>
         </div>
       ))}
       <button className="btn btn-primary" onClick={addSystem} type="button">
-        System hinzufügen
+        Add System
       </button>
     </div>
   );

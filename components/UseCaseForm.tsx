@@ -13,7 +13,7 @@ export const UseCaseForm: React.FC<UseCaseFormProps> = ({ value, onChange }) => 
       className="input input-bordered w-full"
       value={value}
       onChange={e => onChange(e.target.value)}
-      placeholder="z.B. 'Brake the vehicle using foot pedal'"
+      placeholder="e.g. 'Brake the vehicle using foot pedal'"
     />
   </div>
 );
