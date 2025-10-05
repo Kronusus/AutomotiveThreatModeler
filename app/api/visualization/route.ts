@@ -5,11 +5,11 @@ import { validateDiagram } from "../../../lib/validateDiagram";
 export async function POST(req: NextRequest) {
   try {
     const { useCase, effectChain, systems } = await req.json();
-  // Prompt für Gemini
-  const prompt = `Du bist ein Automotive Cybersecurity Architekt. Erstelle ein editierbares Node-Link-Diagramm für folgende Fahrzeugfunktion nach ISO 21434. Framework: Mermaid. Die Daten: Use Case: ${useCase}, Effektkette: ${effectChain}, Systeme: ${JSON.stringify(systems)}. Gib das Diagramm als gültigen Mermaid-Code im JSON-Feld 'diagram' zurück. Antworte ausschließlich mit rohem JSON ohne jegliche Formatierung, Codeblöcke oder Markdown.`;
+    // Prompt for Gemini
+    const prompt = `You are an automotive cybersecurity architect. Create an editable node-link diagram for the following vehicle function according to ISO 21434. Framework: Mermaid. The data: Use Case: ${useCase}, Effect Chain: ${effectChain}, Systems: ${JSON.stringify(systems)}. Return the diagram as valid Mermaid code in the JSON field 'diagram'. Respond exclusively with raw JSON without any formatting, code blocks, or Markdown.`;
     const geminiRes = await getGeminiResponse(prompt);
     if (!validateDiagram(geminiRes.diagram)) {
-      return NextResponse.json({ success: false, error: "Ungültiges Diagrammformat" });
+      return NextResponse.json({ success: false, error: "Invalid diagram format" });
     }
     return NextResponse.json({ success: true, diagram: geminiRes.diagram });
   } catch (e: any) {

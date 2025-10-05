@@ -9,7 +9,11 @@ import { ThreatModelResults, ThreatModelResult } from "../components/ThreatModel
 
 export default function HomePage() {
   const [useCase, setUseCase] = useState("");
-  const [effectChain, setEffectChain] = useState("");
+  const [effectChain, setEffectChain] = useState({
+    input: "",
+    coreLogic: "",
+    output: "",
+  });
   const [systems, setSystems] = useState<System[]>([]);
   const [diagram, setDiagram] = useState("");
   const [diagramLoading, setDiagramLoading] = useState(false);
@@ -18,6 +22,35 @@ export default function HomePage() {
   const [resultsLoading, setResultsLoading] = useState(false);
   const [resultsError, setResultsError] = useState<string | undefined>(undefined);
 
+    // Prefill example data handler
+    const handleExampleData = () => {
+      setUseCase(
+        "As a Driver, I want to safely and proportionally reduce the vehicle's speed (or bring it to a stop) by applying force to the foot pedal."
+      );
+      setEffectChain({
+        input: "Driver Brake Request (Pedal Force/Position)",
+        coreLogic:
+          "Brake System Control (Interprets request, calculates required actuator effort, and manages stability/safety functions like ABS/ESC).",
+        output:
+          "Vehicle Deceleration/Speed Reduction achieved through friction and kinetic energy conversion.",
+      });
+      setSystems([
+        {
+          name: "Brake input Processor",
+          inputs: "BrakePedalPosition (Raw sensor signal)",
+          outputs: "RequestedBrakeDemand (Normalized percentage 0-100%)",
+          description:
+            "This system measures the physical input (position and/or force) applied by the driver. It translates the raw signal into a normalized brake demand and performs initial safety and plausibility checks on the sensor data.",
+        },
+        {
+          name: "Brake Provider",
+          inputs: "RequestedBrakeDemand",
+          outputs: "ActuatorTargetPressure",
+          description:
+            "This system calculates the required braking force for each wheel, considering the driver's request and integrating safety functions (e.g., ABS/ESC to prevent wheel lock or instability). It maps the high-level percentage request to a specific physical command value (e.g., target pressure or actuator current), based on an internal value table.",
+        },
+      ]);
+    };
   const handleGenerateVisualization = async () => {
     setDiagramLoading(true);
     setDiagramError(undefined);
@@ -82,6 +115,9 @@ export default function HomePage() {
       <EffectChainForm value={effectChain} onChange={setEffectChain} />
       <SystemsForm systems={systems} onChange={setSystems} />
       <div className="flex gap-4 mb-4">
+          <button className="btn btn-accent flex items-center gap-2" onClick={handleExampleData}>
+            Example Data
+          </button>
         <button className="btn btn-primary flex items-center gap-2" onClick={handleGenerateVisualization} disabled={diagramLoading}>
           {diagramLoading && (
             <>
