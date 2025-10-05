@@ -1,4 +1,5 @@
 
+"use client";
 import React, { useState } from "react";
 import { UseCaseForm } from "../components/UseCaseForm";
 import { EffectChainForm } from "../components/EffectChainForm";
