@@ -82,10 +82,12 @@ export default function HomePage() {
       <EffectChainForm value={effectChain} onChange={setEffectChain} />
       <SystemsForm systems={systems} onChange={setSystems} />
       <div className="flex gap-4 mb-4">
-        <button className="btn btn-primary" onClick={handleGenerateVisualization} disabled={diagramLoading}>
+        <button className="btn btn-primary flex items-center gap-2" onClick={handleGenerateVisualization} disabled={diagramLoading}>
+          {diagramLoading && <span className="loading loading-spinner loading-xs"></span>}
           Generate Visualization
         </button>
-        <button className="btn btn-secondary" onClick={handlePerformThreatModeling} disabled={resultsLoading || !diagram}>
+        <button className="btn btn-secondary flex items-center gap-2" onClick={handlePerformThreatModeling} disabled={resultsLoading || !diagram}>
+          {resultsLoading && <span className="loading loading-spinner loading-xs"></span>}
           Perform Threat Modeling
         </button>
       </div>

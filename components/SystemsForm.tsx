@@ -4,7 +4,7 @@ export interface System {
   name: string;
   inputs: string;
   outputs: string;
-  interfaces: string;
+  description: string;
 }
 
 interface SystemsFormProps {
@@ -21,7 +21,7 @@ export const SystemsForm: React.FC<SystemsFormProps> = ({ systems, onChange }) =
   };
 
   const addSystem = () => {
-    onChange([...systems, { name: "", inputs: "", outputs: "", interfaces: "" }]);
+    onChange([...systems, { name: "", inputs: "", outputs: "", description: "" }]);
   };
 
   const removeSystem = (idx: number) => {
@@ -51,11 +51,12 @@ export const SystemsForm: React.FC<SystemsFormProps> = ({ systems, onChange }) =
             value={sys.outputs}
             onChange={e => handleSystemChange(idx, "outputs", e.target.value)}
           />
-          <input
-            className="input input-bordered w-full mb-2"
-            placeholder="Interfaces"
-            value={sys.interfaces}
-            onChange={e => handleSystemChange(idx, "interfaces", e.target.value)}
+          <textarea
+            className="textarea textarea-bordered w-full mb-2"
+            placeholder="Description"
+            value={sys.description}
+            onChange={e => handleSystemChange(idx, "description", e.target.value)}
+            rows={2}
           />
           <button className="btn btn-error btn-sm" onClick={() => removeSystem(idx)}>
             Entfernen

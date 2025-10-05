@@ -1,4 +1,5 @@
 import React from "react";
+import Mermaid from "mermaid-react";
 
 interface VisualizationPanelProps {
   diagram: string;
@@ -19,10 +20,13 @@ export const VisualizationPanel: React.FC<VisualizationPanelProps> = ({ diagram,
         <div className="text-red-500">{error}</div>
       ) : (
         <>
-          {/* Mermaid-Diagramm-Renderer, z.B. mit mermaid-react */}
           <div className="mb-4">
-            {/* Hier Diagramm rendern, z.B. <Mermaid chart={diagram} /> */}
-            <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-xs">{diagram}</pre>
+            {/* Render Mermaid diagram if available */}
+            {diagram ? (
+              <Mermaid id="diagram" mmd={diagram} />
+            ) : (
+              <div className="text-gray-400">Kein Diagramm vorhanden</div>
+            )}
           </div>
           <textarea
             className="textarea textarea-bordered w-full"
