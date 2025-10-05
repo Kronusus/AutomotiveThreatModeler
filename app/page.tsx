@@ -109,48 +109,107 @@ export default function HomePage() {
   };
 
   return (
-    <main className="max-w-4xl mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">Automotive Threat Modeler</h1>
-      <UseCaseForm value={useCase} onChange={setUseCase} />
-      <EffectChainForm value={effectChain} onChange={setEffectChain} />
-      <SystemsForm systems={systems} onChange={setSystems} />
-      <div className="flex gap-4 mb-4">
-          <button className="btn btn-accent flex items-center gap-2" onClick={handleExampleData}>
-            Example Data
+    <main className="min-h-screen bg-background text-foreground">
+      <div className="max-w-5xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <h1 className="text-4xl font-extrabold mb-2 text-center">
+          Automotive Threat Modeler
+        </h1>
+        <p className="text-center text-foreground/60 mb-10">
+          A tool to help you model threats in automotive systems.
+        </p>
+
+        <div className="space-y-6">
+          <UseCaseForm value={useCase} onChange={setUseCase} />
+          <EffectChainForm value={effectChain} onChange={setEffectChain} />
+          <SystemsForm systems={systems} onChange={setSystems} />
+        </div>
+
+        <div className="flex justify-center items-center gap-4 my-8 p-4 bg-card rounded-lg shadow-md">
+          <button className="btn btn-accent" onClick={handleExampleData}>
+            Load Example
           </button>
-        <button className="btn btn-primary flex items-center gap-2" onClick={handleGenerateVisualization} disabled={diagramLoading}>
-          {diagramLoading && (
-            <>
-              <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-              </svg>
-              <span className="text-xs text-gray-500">Loading...</span>
-            </>
-          )}
-          Generate Visualization
-        </button>
-        <button className="btn btn-secondary flex items-center gap-2" onClick={handlePerformThreatModeling} disabled={resultsLoading || !diagram}>
-          {resultsLoading && (
-            <>
-              <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-              </svg>
-              <span className="text-xs text-gray-500">Loading...</span>
-            </>
-          )}
-          Perform Threat Modeling
-        </button>
+          <button
+            className="btn btn-primary"
+            onClick={handleGenerateVisualization}
+            disabled={diagramLoading}
+          >
+            {diagramLoading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+                <span>Generating...</span>
+              </>
+            ) : (
+              "Generate Visualization"
+            )}
+          </button>
+          <button
+            className="btn btn-secondary"
+            onClick={handlePerformThreatModeling}
+            disabled={resultsLoading || !diagram}
+          >
+            {resultsLoading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+                <span>Analyzing...</span>
+              </>
+            ) : (
+              "Perform Threat Modeling"
+            )}
+          </button>
+        </div>
+
+        <VisualizationPanel
+          diagram={diagram}
+          onEdit={setDiagram}
+          loading={diagramLoading}
+          error={diagramError}
+        />
+        <ThreatModelResults
+          results={results}
+          loading={resultsLoading}
+          error={resultsError}
+          onExportPDF={() => handleExport("pdf")}
+          onExportCSV={() => handleExport("csv")}
+        />
       </div>
-      <VisualizationPanel diagram={diagram} onEdit={setDiagram} loading={diagramLoading} error={diagramError} />
-      <ThreatModelResults
-        results={results}
-        loading={resultsLoading}
-        error={resultsError}
-        onExportPDF={() => handleExport("pdf")}
-        onExportCSV={() => handleExport("csv")}
-      />
     </main>
   );
 }

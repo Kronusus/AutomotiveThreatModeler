@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #f5f5f5; /* Light gray background */
   --foreground: #171717;
+  --card-background: #ffffff;
+  --card-border: #e0e0e0;
+  --primary: #3b82f6; /* Blue */
+  --secondary: #6366f1; /* Indigo */
+  --accent: #10b981; /* Green */
 }
 
 @theme inline {
@@ -14,13 +19,64 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1a1a1a;
+    --foreground: #f5f5f5;
+    --card-background: #2a2a2a;
+    --card-border: #444444;
+    --primary: #60a5fa; /* Lighter Blue */
+    --secondary: #818cf8; /* Lighter Indigo */
+    --accent: #34d399; /* Lighter Green */
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+.card {
+  background-color: var(--card-background);
+  border: 1px solid var(--card-border);
+  border-radius: 0.5rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 600;
+  transition: background-color 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+.btn-primary:hover {
+  background-color: color-mix(in srgb, var(--primary) 90%, black);
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+  color: white;
+}
+.btn-secondary:hover {
+  background-color: color-mix(in srgb, var(--secondary) 90%, black);
+}
+
+.btn-accent {
+  background-color: var(--accent);
+  color: white;
+}
+.btn-accent:hover {
+  background-color: color-mix(in srgb, var(--accent) 90%, black);
+}
+
+.input {
+  background-color: var(--card-background);
+  border: 1px solid var(--card-border);
 }

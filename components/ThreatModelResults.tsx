@@ -16,46 +16,86 @@ interface ThreatModelResultsProps {
   onExportCSV: () => void;
 }
 
-export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({ results, loading, error, onExportPDF, onExportCSV }) => (
-  <div className="card bg-white shadow p-6 mb-4">
-    <label className="block text-lg font-semibold mb-2">Threat Modeling Results</label>
-    {loading ? (
-      <div className="text-center py-8">
-        <span className="loading loading-spinner loading-lg"></span>
+export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({
+  results,
+  loading,
+  error,
+  onExportPDF,
+  onExportCSV,
+}) => {
+  if (loading) {
+    return (
+      <div className="card shadow-md p-6 mt-6 text-center">
+        <h3 className="text-lg font-bold mb-2">
+          Analyzing for Threats...
+        </h3>
+        <p>Please wait while we perform the threat modeling analysis.</p>
       </div>
-    ) : error ? (
-      <div className="text-red-500">{error}</div>
-    ) : (
-      <>
-        <div className="mb-4 flex gap-2">
-          <button className="btn btn-outline btn-primary" onClick={onExportPDF}>Export as PDF</button>
-          <button className="btn btn-outline btn-secondary" onClick={onExportCSV}>Export as CSV</button>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="card shadow-md p-6 mt-6 text-center bg-red-100 border-red-400">
+        <h3 className="text-lg font-bold mb-2 text-red-800">
+          Analysis Failed
+        </h3>
+        <p className="text-red-700">{error}</p>
+      </div>
+    );
+  }
+
+  if (results.length === 0) {
+    return (
+      <div className="card shadow-md p-6 mt-6 text-center">
+        <h3 className="text-lg font-bold mb-2">
+          No Threat Modeling Results
+        </h3>
+        <p>
+          Generate a visualization and then perform threat modeling to see the
+          results here.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="card shadow-md p-6 mt-6">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-bold">Threat Modeling Results</h3>
+        <div className="flex gap-2">
+          <button className="btn btn-primary" onClick={onExportPDF}>
+            Export as PDF
+          </button>
+          <button className="btn btn-secondary" onClick={onExportCSV}>
+            Export as CSV
+          </button>
         </div>
-        <div className="overflow-x-auto">
-          <table className="table w-full">
-            <thead>
-              <tr>
-                <th>Asset</th>
-                <th>Property (C, I, A, ...)</th>
-                <th>STRIDE</th>
-                <th>Reasoning</th>
-                <th>Damage Scenario</th>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-card-border">
+              <th className="p-2 border">Asset</th>
+              <th className="p-2 border">Property</th>
+              <th className="p-2 border">STRIDE</th>
+              <th className="p-2 border">Reasoning</th>
+              <th className="p-2 border">Damage Scenario</th>
+            </tr>
+          </thead>
+          <tbody>
+            {results.map((r, i) => (
+              <tr key={i} className="odd:bg-card">
+                <td className="p-2 border">{r.asset}</td>
+                <td className="p-2 border">{r.property}</td>
+                <td className="p-2 border">{r.stride}</td>
+                <td className="p-2 border">{r.reasoning}</td>
+                <td className="p-2 border">{r.damage}</td>
               </tr>
-            </thead>
-            <tbody>
-              {results.map((r, i) => (
-                <tr key={i}>
-                  <td>{r.asset}</td>
-                  <td>{r.property}</td>
-                  <td>{r.stride}</td>
-                  <td>{r.reasoning}</td>
-                  <td>{r.damage}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </>
-    )}
-  </div>
-);
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
