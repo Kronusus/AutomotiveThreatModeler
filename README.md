@@ -14,7 +14,10 @@ Automotive Threat Modeler is a Next.js web application to assist automotive cybe
 - View results in a table (assets, properties, threats, reasoning, damage scenarios)
 - Export results to PDF or CSV
 
-## Setup
+## Prerequisites
+
+- Node.js 18 or later
+- pnpm (or npm/yarn)
 
 1. Clone the repository:
 	```bash
@@ -26,10 +29,11 @@ Automotive Threat Modeler is a Next.js web application to assist automotive cybe
 	pnpm install
 	# or npm install / yarn install
 	```
-3. Add your Gemini API key to `.env`:
-	```env
-	GEMINI_API_KEY=your-gemini-api-key-here
+3. Copy `.env.example` to `.env` and update the API key:
+	```bash
+	cp .env.example .env
 	```
+	Then edit `.env` with your actual Gemini API key.
 4. Start the development server:
 	```bash
 	pnpm dev
@@ -54,7 +58,7 @@ Automotive Threat Modeler is a Next.js web application to assist automotive cybe
 - Next.js (App Router, TypeScript)
 - Tailwind CSS
 - mermaid, mermaid-react (diagram rendering)
-- Google Generative AI (Gemini)as
+- Google Generative AI (Gemini)
 
 ## License
 
