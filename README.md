@@ -13,7 +13,6 @@ Automotive Threat Modeler is a Next.js web application to assist automotive cybe
 - Perform STRIDE-based threat modeling under ISO 21434
 - View results in a table (assets, properties, threats, reasoning, damage scenarios)
 - Export results to PDF or CSV
-- Modern, clean UI with Tailwind CSS
 
 ## Setup
 
