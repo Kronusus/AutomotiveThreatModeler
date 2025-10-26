@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import mermaid from "mermaid";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";

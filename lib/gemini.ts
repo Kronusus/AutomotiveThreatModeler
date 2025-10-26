@@ -1,10 +1,9 @@
-// @ts-ignore: No types available for @google/generative-ai
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Next.js API routes run server-side, so process.env is safe for secrets
 const GEMINI_ENV_NAME = "GEMINI_API_KEY" as const;
 const rawApiKey = process.env[GEMINI_ENV_NAME]?.trim();
-const GEMINI_KEY_PATTERN = /^AI[0-9A-Za-z_\-]{20,}$/;
+const GEMINI_KEY_PATTERN = /^AI[0-9A-Za-z_-]{20,}$/;
 
 const hasApiKey = Boolean(rawApiKey);
 const isApiKeyLikelyValid = hasApiKey ? GEMINI_KEY_PATTERN.test(rawApiKey!) : false;
@@ -48,7 +47,7 @@ export async function getGeminiResponse(prompt: string): Promise<any> {
     try {
       parsed = JSON.parse(text);
     } catch (e) {
-      throw new Error("Gemini API returned ungültiges JSON: " + text);
+      throw new Error("Gemini API returned invalid JSON: " + text);
     }
     return parsed;
   } catch (err: any) {
