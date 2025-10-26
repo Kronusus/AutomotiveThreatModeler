@@ -27,7 +27,7 @@ export const FormSection: React.FC<FormSectionProps> = ({
     >
       <header className="space-y-2">
         <div className="flex items-center justify-between gap-4">
-          <h3 className="text-lg font-bold text-foreground">{title}</h3>
+          <h3 className="text-base font-semibold text-foreground">{title}</h3>
           {headerAction && <div>{headerAction}</div>}
         </div>
         {description && (

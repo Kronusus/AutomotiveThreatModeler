@@ -23,11 +23,14 @@ export const VisualizationPanel: React.FC<VisualizationPanelProps> = ({
   const [copied, setCopied] = useState(false);
   const [diagramCopied, setDiagramCopied] = useState(false);
   const mermaidRef = useRef<HTMLDivElement>(null);
+  const [renderKey, setRenderKey] = useState(0);
 
   useEffect(() => {
     if (diagram && mermaidRef.current) {
+      // Generate a unique ID for each render
+      const uniqueId = `diagram-svg-${renderKey}`;
       mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
-      mermaid.render('diagram-svg', diagram)
+      mermaid.render(uniqueId, diagram)
         .then(({ svg }) => {
           if (mermaidRef.current) {
             mermaidRef.current.innerHTML = svg;
@@ -35,6 +38,29 @@ export const VisualizationPanel: React.FC<VisualizationPanelProps> = ({
         })
         .catch(e => console.error(e));
     }
+  }, [diagram, renderKey]);
+
+  // Re-render when component becomes visible (detect if ref has dimensions)
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && diagram) {
+            // Trigger re-render when element becomes visible
+            setRenderKey((prev) => prev + 1);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    if (mermaidRef.current) {
+      observer.observe(mermaidRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
   }, [diagram]);
 
   const handleCopy = async () => {

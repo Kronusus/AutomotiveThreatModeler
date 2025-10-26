@@ -18,7 +18,7 @@ export const UseCaseForm: React.FC<UseCaseFormProps> = ({ value, onChange }) => 
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder="e.g., As a Driver, I want to safely brake the vehicle using the foot pedal"
-      className="h-11 text-base"
+      className="h-11 text-sm"
     />
   </div>
 );

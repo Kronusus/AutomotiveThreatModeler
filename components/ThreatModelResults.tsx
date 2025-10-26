@@ -36,7 +36,7 @@ export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({
         <div className="flex flex-col items-center justify-center space-y-4">
           <Loader2 className="h-10 w-10 text-primary animate-spin" />
           <div className="text-center space-y-1">
-            <p className="text-base font-medium">Analyzing threats</p>
+            <p className="text-sm font-medium">Analyzing threats</p>
             <p className="text-sm text-muted-foreground">
               Performing STRIDE threat modeling analysis
             </p>
@@ -64,7 +64,7 @@ export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({
             <Shield className="h-7 w-7 text-muted-foreground" />
           </div>
           <div className="space-y-1">
-            <p className="text-base font-medium">No results yet</p>
+            <p className="text-sm font-medium">No results yet</p>
             <p className="text-sm text-muted-foreground max-w-sm">
               Run the threat modeling analysis to identify security vulnerabilities
             </p>
@@ -86,6 +86,7 @@ export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({
           <Button 
             onClick={onExportPDF} 
             size="sm"
+            variant="default"
           >
             <FileDown className="h-4 w-4" />
             PDF
@@ -93,6 +94,7 @@ export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({
           <Button 
             onClick={onExportJSON} 
             size="sm"
+            variant="default"
           >
             <FileJson className="h-4 w-4" />
             JSON
@@ -100,6 +102,7 @@ export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({
           <Button 
             onClick={onExportCSV} 
             size="sm"
+            variant="default"
           >
             <FileSpreadsheet className="h-4 w-4" />
             CSV
@@ -113,42 +116,34 @@ export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({
           <TableHeader>
             <TableRow className="bg-muted/50">
               <TableHead className="font-semibold w-[15%] p-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Asset</div>
+                <div className="text-sm font-semibold">Asset</div>
               </TableHead>
               
               <TableHead className="font-semibold w-[12%] p-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Property</div>
+                <div className="text-sm font-semibold">Property</div>
               </TableHead>
               
               <TableHead className="font-semibold w-[10%] p-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">STRIDE</div>
+                <div className="text-sm font-semibold">STRIDE</div>
               </TableHead>
               
               <TableHead className="font-semibold w-[30%] p-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Reasoning</div>
+                <div className="text-sm font-semibold">Reasoning</div>
               </TableHead>
               
               <TableHead className="font-semibold w-[33%] p-3">
-                <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Damage Scenario</div>
+                <div className="text-sm font-semibold">Damage Scenario</div>
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {results.map((r, i) => (
               <TableRow key={i} className="hover:bg-muted/40 transition-colors">
-                <TableCell className="font-medium align-top py-4 text-sm">{r.asset}</TableCell>
+                <TableCell className="align-top py-4 text-sm">{r.asset}</TableCell>
                 <TableCell className="align-top py-4 text-sm">{r.property}</TableCell>
-                <TableCell className="align-top py-4">
-                  <Badge variant="outline" className="font-mono text-xs font-semibold">
-                    {r.stride}
-                  </Badge>
-                </TableCell>
-                <TableCell className="align-top py-4">
-                  <p className="text-sm leading-relaxed text-foreground">{r.reasoning}</p>
-                </TableCell>
-                <TableCell className="align-top py-4">
-                  <p className="text-sm leading-relaxed text-foreground">{r.damage}</p>
-                </TableCell>
+                <TableCell className="align-top py-4 text-sm">{r.stride}</TableCell>
+                <TableCell className="align-top py-4 text-sm">{r.reasoning}</TableCell>
+                <TableCell className="align-top py-4 text-sm">{r.damage}</TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -46,8 +46,8 @@ export const HorizontalStepper: React.FC<HorizontalStepperProps> = ({
                 {step.isComplete ? <Check className="h-4 w-4" /> : step.id}
               </div>
               <div className="min-w-0 hidden sm:block">
-                <p className="text-sm font-bold truncate">{step.label}</p>
-                <p className="text-xs text-muted-foreground truncate">
+                <p className="text-sm font-semibold truncate">{step.label}</p>
+                <p className="text-sm text-muted-foreground truncate">
                   {step.subtitle}
                 </p>
               </div>

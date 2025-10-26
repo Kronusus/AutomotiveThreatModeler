@@ -53,7 +53,7 @@ export const STEPS: StepConfig[] = [
     title: "Generate Visualization",
     description: "Transform your inputs into an interactive system diagram",
     label: "Generate Diagram",
-    subtitle: "AI visualization",
+    subtitle: "UML visualization",
   },
   {
     id: 3,

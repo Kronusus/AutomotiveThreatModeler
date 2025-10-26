@@ -7,7 +7,6 @@ import { EffectChainForm } from "../components/EffectChainForm";
 import { SystemsForm } from "../components/SystemsForm";
 import { VisualizationPanel } from "../components/VisualizationPanel";
 import { ThreatModelResults } from "../components/ThreatModelResults";
-import { ThemeToggle } from "../components/theme-toggle";
 import { FormSection } from "@/components/FormSection";
 import { HorizontalStepper } from "@/components/HorizontalStepper";
 import { StepCard } from "@/components/StepCard";
@@ -106,17 +105,14 @@ export default function HomePage() {
         <div className="container mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8">
           <div className="flex h-14 items-center justify-between gap-4">
             <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">
-              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground shrink-0">
-                <Shield className="h-5 w-5" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-md bg-primary text-primary-foreground shrink-0">
+                <Shield className="h-7 w-7" />
               </div>
               <div className="min-w-0 flex-1">
                 <h1 className="text-sm sm:text-base font-semibold tracking-tight truncate">
                   Automotive Threat Modeler
                 </h1>
               </div>
-            </div>
-            <div className="shrink-0">
-              <ThemeToggle />
             </div>
           </div>
         </div>
@@ -130,7 +126,7 @@ export default function HomePage() {
             <Card className="shadow-md animate-in fade-in-50 duration-500">
               <CardContent className="pt-7 pb-7">
                 <div className="space-y-5">
-                  <p className="text-base text-muted-foreground leading-relaxed">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     A systematic approach to identify security threats in automotive systems using the STRIDE methodology. 
                     Follow the three-step process below to define your system, generate an architecture diagram, and analyze potential vulnerabilities.
                   </p>
@@ -218,7 +214,6 @@ export default function HomePage() {
                       Complete the use case and add at least one system to proceed.
                     </p>
                     <Button
-                      className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-primary disabled:text-primary-foreground"
                       onClick={() => {
                         if (canGenerateVisualization) {
                           setCollapsed1(true);
@@ -282,7 +277,7 @@ export default function HomePage() {
                         onClick={handleGenerateVisualization}
                         disabled={!canGenerateVisualization || diagramLoading}
                         size="lg"
-                        variant={diagram ? "outline" : "default"}
+                        variant="default"
                         ref={generateBtnRef}
                       >
                         {diagramLoading ? (
@@ -299,7 +294,6 @@ export default function HomePage() {
                       </Button>
 
                       <Button
-                        className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-primary disabled:text-primary-foreground"
                         onClick={() => {
                           if (hasDiagram) {
                             setCollapsed2(true);

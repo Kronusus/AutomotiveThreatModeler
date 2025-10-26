@@ -76,7 +76,7 @@ export const StepCard: React.FC<StepCardProps> = ({
               )}
             </div>
             <div className="space-y-1">
-              <CardTitle className="text-2xl font-bold">{title}</CardTitle>
+              <CardTitle className="text-lg font-semibold">{title}</CardTitle>
               <CardDescription className="text-sm">{description}</CardDescription>
             </div>
           </div>
