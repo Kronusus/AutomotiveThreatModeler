@@ -8,7 +8,6 @@ import { SystemsForm } from "../components/SystemsForm";
 import { VisualizationPanel } from "../components/VisualizationPanel";
 import { ThreatModelResults } from "../components/ThreatModelResults";
 import { FormSection } from "@/components/FormSection";
-import { HorizontalStepper } from "@/components/HorizontalStepper";
 import { StepCard } from "@/components/StepCard";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -51,9 +50,12 @@ export default function HomePage() {
   };
     
   const handleGenerateVisualization = async () => {
+    const isFirstGeneration = !diagram;
     await generateDiagram(useCase, effectChain, systems);
-    // Focus on "Next step" button after diagram is generated
-    setTimeout(() => nextStep2BtnRef.current?.focus(), 300);
+    // Focus on "Next step" button only on first generation
+    if (isFirstGeneration) {
+      setTimeout(() => nextStep2BtnRef.current?.focus(), 300);
+    }
   };
 
   const handlePerformThreatModeling = async () => {
@@ -102,16 +104,19 @@ export default function HomePage() {
     <>
       {/* Header - Fixed */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8">
-          <div className="flex h-14 items-center justify-between gap-4">
-            <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">
-              <div className="flex h-12 w-12 items-center justify-center rounded-md bg-primary text-primary-foreground shrink-0">
-                <Shield className="h-7 w-7" />
+        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center">
+            <div className="flex items-center gap-3 flex-1">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <Shield className="h-6 w-6" />
               </div>
-              <div className="min-w-0 flex-1">
-                <h1 className="text-sm sm:text-base font-semibold tracking-tight truncate">
+              <div>
+                <h1 className="text-lg font-bold tracking-tight">
                   Automotive Threat Modeler
                 </h1>
+                <p className="text-xs text-muted-foreground hidden sm:block">
+                  STRIDE Methodology for Vehicle Security
+                </p>
               </div>
             </div>
           </div>
@@ -119,48 +124,9 @@ export default function HomePage() {
       </header>
 
       {/* Main Content */}
-      <main className="min-h-[calc(100vh-4rem)] bg-background">
-        <div className="container mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-          <div className="space-y-8 lg:space-y-10">
-            {/* Introduction Card */}
-            <Card className="shadow-md animate-in fade-in-50 duration-500">
-              <CardContent className="pt-7 pb-7">
-                <div className="space-y-5">
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    A systematic approach to identify security threats in automotive systems using the STRIDE methodology. 
-                    Follow the three-step process below to define your system, generate an architecture diagram, and analyze potential vulnerabilities.
-                  </p>
-                  
-                  {/* Horizontal Stepper */}
-                  <HorizontalStepper
-                    steps={[
-                      {
-                        id: 1,
-                        label: STEPS[0].label,
-                        subtitle: STEPS[0].subtitle,
-                        isComplete: step2Unlocked,
-                        isActive: !step2Unlocked,
-                      },
-                      {
-                        id: 2,
-                        label: STEPS[1].label,
-                        subtitle: STEPS[1].subtitle,
-                        isComplete: hasDiagram,
-                        isActive: step2Unlocked && !hasDiagram,
-                      },
-                      {
-                        id: 3,
-                        label: STEPS[2].label,
-                        subtitle: STEPS[2].subtitle,
-                        isComplete: hasResults,
-                        isActive: step3Unlocked && !hasResults,
-                      },
-                    ]}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
+      <main className="min-h-screen bg-background">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8">
+          <div className="space-y-8">
             {/* Step 1: Define System */}
             <section id="step-1" className="scroll-mt-20">
               <StepCard
@@ -172,17 +138,18 @@ export default function HomePage() {
                 collapsed={collapsed1}
                 onToggleCollapse={() => setCollapsed1((s) => !s)}
               >
-                <div className="space-y-10">
+                <div className="space-y-6">
                   <FormSection
                     title="Use Case"
                     description="Describe the primary scenario or goal that drives this analysis."
                     headerAction={
                       <Button
-                        variant="default"
+                        variant="outline"
+                        size="sm"
                         onClick={handleExampleData}
                         title="Load example data"
                       >
-                        <FileText className="h-4 w-4" />
+                        <FileText className="h-4 w-4 mr-2" />
                         Load example
                       </Button>
                     }
@@ -208,9 +175,9 @@ export default function HomePage() {
                     <SystemsForm systems={systems} onChange={setSystems} />
                   </FormSection>
 
-                  {/* Primary action at bottom right per UX best practices */}
-                  <div className="flex items-center justify-between pt-8 border-t">
-                    <p className="text-sm text-muted-foreground max-w-md">
+                  {/* Primary action at bottom */}
+                  <div className="flex items-center justify-between pt-4 border-t">
+                    <p className="text-sm text-muted-foreground">
                       Complete the use case and add at least one system to proceed.
                     </p>
                     <Button
@@ -229,10 +196,10 @@ export default function HomePage() {
                         }
                       }}
                       size="lg"
-                      variant="default"
+                      disabled={!canGenerateVisualization}
                     >
-                      Next step
-                      <ChevronDown className="h-4 w-4 rotate-[-90deg]" />
+                      Continue
+                      <ChevronDown className="ml-2 h-4 w-4 -rotate-90" />
                     </Button>
                   </div>
                 </div>
@@ -251,7 +218,7 @@ export default function HomePage() {
                 collapsed={collapsed2}
                 onToggleCollapse={() => setCollapsed2((s) => !s)}
               >
-                <div className="space-y-7">
+                <div className="space-y-6">
                   {!step2Unlocked && (
                     <Alert>
                       <AlertDescription>
@@ -267,55 +234,69 @@ export default function HomePage() {
                     error={diagramError}
                   />
 
-                  {/* Primary actions at bottom right per UX best practices */}
-                  <div className="flex items-center justify-between pt-8 border-t">
-                    <p className="text-sm text-muted-foreground max-w-md">
-                      {diagram ? "Edit the diagram above or proceed to threat analysis." : "Generate the visualization to continue."}
+                  {/* Actions */}
+                  <div className="flex items-center justify-between pt-6 border-t">
+                    <p className="text-sm text-muted-foreground">
+                      {diagram ? "Edit the diagram or proceed to threat analysis." : "Generate the visualization to continue."}
                     </p>
                     <div className="flex items-center gap-3">
-                      <Button
-                        onClick={handleGenerateVisualization}
-                        disabled={!canGenerateVisualization || diagramLoading}
-                        size="lg"
-                        variant="default"
-                        ref={generateBtnRef}
-                      >
-                        {diagramLoading ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            Generating
-                          </>
-                        ) : (
-                          <>
-                            <Sparkles className="h-4 w-4" />
-                            {diagram ? "Regenerate" : "Generate"}
-                          </>
-                        )}
-                      </Button>
+                      {diagram && (
+                        <Button
+                          onClick={handleGenerateVisualization}
+                          disabled={diagramLoading}
+                          size="lg"
+                          variant="outline"
+                        >
+                          {diagramLoading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Generating...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="mr-2 h-4 w-4" />
+                              Regenerate
+                            </>
+                          )}
+                        </Button>
+                      )}
 
-                      <Button
-                        onClick={() => {
-                          if (hasDiagram) {
+                      {!diagram ? (
+                        <Button
+                          onClick={handleGenerateVisualization}
+                          disabled={!canGenerateVisualization || diagramLoading}
+                          size="lg"
+                          variant="default"
+                          ref={generateBtnRef}
+                        >
+                          {diagramLoading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Generating...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="mr-2 h-4 w-4" />
+                              Generate
+                            </>
+                          )}
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={() => {
                             setCollapsed2(true);
                             document.getElementById("step-3")?.scrollIntoView({ behavior: "smooth" });
                             setCollapsed3(false);
                             setTimeout(() => analyzeBtnRef.current?.focus(), 500);
-                          } else {
-                            if (!canGenerateVisualization) {
-                              document.getElementById("step-1")?.scrollIntoView({ behavior: "smooth" });
-                            } else {
-                              generateBtnRef.current?.focus();
-                            }
-                          }
-                        }}
-                        disabled={!hasDiagram}
-                        size="lg"
-                        variant="default"
-                        ref={nextStep2BtnRef}
-                      >
-                        Next step
-                        <ChevronDown className="h-4 w-4 rotate-[-90deg]" />
-                      </Button>
+                          }}
+                          size="lg"
+                          variant="default"
+                          ref={nextStep2BtnRef}
+                        >
+                          Continue
+                          <ChevronDown className="ml-2 h-4 w-4 -rotate-90" />
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -334,9 +315,9 @@ export default function HomePage() {
                 collapsed={collapsed3}
                 onToggleCollapse={() => setCollapsed3((s) => !s)}
               >
-                <div className="space-y-10">
+                <div className="space-y-6">
                   {!step3Unlocked && (
-                    <Alert className="animate-in fade-in-50 duration-200">
+                    <Alert>
                       <AlertDescription>
                         Generate and review the system visualization in Step 2 before running the STRIDE analysis.
                       </AlertDescription>
@@ -352,27 +333,26 @@ export default function HomePage() {
                     onExportCSV={() => handleExport("csv")}
                   />
 
-                  {/* Primary action at bottom right per UX best practices */}
-                  <div className="flex items-center justify-between pt-8 border-t">
-                    <p className="text-sm text-muted-foreground max-w-md">
-                      {hasResults ? "Review the threat analysis results above and export if needed." : "Run the STRIDE analysis to identify security threats."}
+                  {/* Action */}
+                  <div className="flex items-center justify-between pt-6 border-t">
+                    <p className="text-sm text-muted-foreground">
+                      {hasResults ? "Review the threat analysis results and export if needed." : "Run the STRIDE analysis to identify security threats."}
                     </p>
                     <Button
                       onClick={handlePerformThreatModeling}
                       disabled={!canPerformThreatModeling || resultsLoading}
                       size="lg"
-                      variant="default"
                       ref={analyzeBtnRef}
                     >
                       {resultsLoading ? (
                         <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Analyzing
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Analyzing...
                         </>
                       ) : (
                         <>
-                          <Shield className="h-4 w-4" />
-                          Analyze threats
+                          <Shield className="mr-2 h-4 w-4" />
+                          Analyze Threats
                         </>
                       )}
                     </Button>

@@ -42,63 +42,53 @@ export const StepCard: React.FC<StepCardProps> = ({
   return (
     <Card
       className={cn(
-        "shadow-md transition-all duration-300",
-        isComplete || isActive
-          ? "hover:shadow-lg"
-          : isLocked
-          ? "border-dashed bg-muted/30"
-          : "hover:shadow-lg",
+        "transition-all duration-200",
+        isLocked && "opacity-60",
         className
       )}
     >
-      <CardHeader
-        className={cn(
-          "space-y-2 pb-6 transition-colors duration-300",
-          isLocked && "bg-muted/30"
-        )}
-      >
-        <div className="flex items-start justify-between gap-3 w-full">
-          <div className="flex items-center gap-4">
+      <CardHeader className="pb-6">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-4 flex-1 min-w-0">
             <div
               className={cn(
-                "flex h-10 w-10 shrink-0 items-center justify-center rounded-md font-bold text-lg transition-all duration-300 shadow-sm",
+                "flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-semibold text-sm border-2 transition-colors mt-0.5",
                 isComplete
-                  ? "bg-primary text-primary-foreground shadow"
+                  ? "bg-primary text-primary-foreground border-primary"
                   : isActive
-                  ? "bg-primary text-primary-foreground shadow"
-                  : "bg-muted text-muted-foreground"
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-background text-muted-foreground border-muted-foreground/20"
               )}
             >
               {isComplete ? (
-                <Check className="h-6 w-6 animate-in zoom-in-50 duration-300" />
+                <Check className="h-5 w-5" />
               ) : (
                 stepNumber
               )}
             </div>
-            <div className="space-y-1">
-              <CardTitle className="text-lg font-semibold">{title}</CardTitle>
-              <CardDescription className="text-sm">{description}</CardDescription>
+            <div className="flex-1 space-y-1 min-w-0">
+              <CardTitle className="text-lg font-semibold leading-none">{title}</CardTitle>
+              <CardDescription className="text-sm leading-snug">{description}</CardDescription>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onToggleCollapse}
-              aria-expanded={!collapsed}
-              title={collapsed ? "Expand" : "Collapse"}
-            >
-              {collapsed ? (
-                <ChevronDown className="h-4 w-4" />
-              ) : (
-                <ChevronUp className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onToggleCollapse}
+            aria-expanded={!collapsed}
+            title={collapsed ? "Expand" : "Collapse"}
+            className="shrink-0 h-9 w-9"
+          >
+            {collapsed ? (
+              <ChevronDown className="h-4 w-4" />
+            ) : (
+              <ChevronUp className="h-4 w-4" />
+            )}
+          </Button>
         </div>
       </CardHeader>
       {!collapsed && (
-        <CardContent className="pt-7 pb-9 animate-in fade-in-50 slide-in-from-top-4 duration-300">
+        <CardContent className="pt-0 pb-6">
           {children}
         </CardContent>
       )}

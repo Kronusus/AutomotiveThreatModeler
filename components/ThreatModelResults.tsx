@@ -73,75 +73,68 @@ export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({
   }
 
   return (
-    <div className="space-y-4">
-      {/* Export Buttons and Count */}
-      <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-        <p className="text-sm text-muted-foreground font-medium">
-          {results.length} threat{results.length !== 1 ? 's' : ''} identified
-        </p>
+    <div className="space-y-6">
+      {/* Export Actions */}
+      <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between p-4 rounded-lg border bg-muted/50">
+        <div className="flex items-center gap-2">
+          <Shield className="h-5 w-5 text-primary" />
+          <p className="text-sm font-medium">
+            {results.length} threat{results.length !== 1 ? 's' : ''} identified
+          </p>
+        </div>
         
-        <div className="flex gap-2 shrink-0">
+        <div className="flex gap-2">
           <Button 
             onClick={onExportPDF} 
             size="sm"
-            variant="default"
+            variant="outline"
           >
-            <FileDown className="h-4 w-4" />
+            <FileDown className="h-4 w-4 mr-2" />
             PDF
           </Button>
           <Button 
             onClick={onExportJSON} 
             size="sm"
-            variant="default"
+            variant="outline"
           >
-            <FileJson className="h-4 w-4" />
+            <FileJson className="h-4 w-4 mr-2" />
             JSON
           </Button>
           <Button 
             onClick={onExportCSV} 
             size="sm"
-            variant="default"
+            variant="outline"
           >
-            <FileSpreadsheet className="h-4 w-4" />
+            <FileSpreadsheet className="h-4 w-4 mr-2" />
             CSV
           </Button>
         </div>
       </div>
 
       {/* Results Table */}
-      <div className="rounded-md border overflow-hidden shadow-sm">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
-            <TableRow className="bg-muted/50">
-              <TableHead className="font-semibold w-[15%] p-3">
-                <div className="text-sm font-semibold">Asset</div>
-              </TableHead>
-              
-              <TableHead className="font-semibold w-[12%] p-3">
-                <div className="text-sm font-semibold">Property</div>
-              </TableHead>
-              
-              <TableHead className="font-semibold w-[10%] p-3">
-                <div className="text-sm font-semibold">STRIDE</div>
-              </TableHead>
-              
-              <TableHead className="font-semibold w-[30%] p-3">
-                <div className="text-sm font-semibold">Reasoning</div>
-              </TableHead>
-              
-              <TableHead className="font-semibold w-[33%] p-3">
-                <div className="text-sm font-semibold">Damage Scenario</div>
-              </TableHead>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="w-[18%]">Asset</TableHead>
+              <TableHead className="w-[11%]">Property</TableHead>
+              <TableHead className="w-[9%]">STRIDE</TableHead>
+              <TableHead className="w-[24%]">Damage Scenario</TableHead>
+              <TableHead className="w-[38%]">Reasoning</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {results.map((r, i) => (
-              <TableRow key={i} className="hover:bg-muted/40 transition-colors">
-                <TableCell className="align-top py-4 text-sm">{r.asset}</TableCell>
-                <TableCell className="align-top py-4 text-sm">{r.property}</TableCell>
-                <TableCell className="align-top py-4 text-sm">{r.stride}</TableCell>
-                <TableCell className="align-top py-4 text-sm">{r.reasoning}</TableCell>
-                <TableCell className="align-top py-4 text-sm">{r.damage}</TableCell>
+              <TableRow key={i}>
+                <TableCell className="text-sm">{r.asset}</TableCell>
+                <TableCell className="text-sm">{r.property}</TableCell>
+                <TableCell>
+                  <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                    {r.stride}
+                  </span>
+                </TableCell>
+                <TableCell className="text-sm">{r.damage}</TableCell>
+                <TableCell className="text-sm">{r.reasoning}</TableCell>
               </TableRow>
             ))}
           </TableBody>

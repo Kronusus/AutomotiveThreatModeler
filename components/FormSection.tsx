@@ -19,23 +19,24 @@ export const FormSection: React.FC<FormSectionProps> = ({
   headerAction,
 }) => {
   return (
-    <section
-      className={cn(
-        "space-y-5",
-        className
-      )}
-    >
-      <header className="space-y-2">
-        <div className="flex items-center justify-between gap-4">
-          <h3 className="text-base font-semibold text-foreground">{title}</h3>
-          {headerAction && <div>{headerAction}</div>}
+    <div className={cn("space-y-4 py-4", className)}>
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-1.5">
+          <h3 className="text-base font-semibold leading-none tracking-tight">
+            {title}
+          </h3>
+          {description && (
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {description}
+            </p>
+          )}
         </div>
-        {description && (
-          <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
-        )}
-      </header>
-      <div className="space-y-4">{children}</div>
-      {footer && <div className="mt-6 pt-6 border-t border-border">{footer}</div>}
-    </section>
+        {headerAction && <div className="shrink-0">{headerAction}</div>}
+      </div>
+      <div>{children}</div>
+      {footer && (
+        <div className="pt-4 border-t">{footer}</div>
+      )}
+    </div>
   );
 };
