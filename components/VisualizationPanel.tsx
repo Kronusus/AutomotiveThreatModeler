@@ -21,7 +21,6 @@ export const VisualizationPanel: React.FC<VisualizationPanelProps> = ({
   error 
 }) => {
   const [copied, setCopied] = useState(false);
-  const [diagramCopied, setDiagramCopied] = useState(false);
   const mermaidRef = useRef<HTMLDivElement>(null);
   const [renderKey, setRenderKey] = useState(0);
 
@@ -73,59 +72,6 @@ export const VisualizationPanel: React.FC<VisualizationPanelProps> = ({
     }
   };
 
-  const handleCopyDiagram = async () => {
-    try {
-      // First, try to get the rendered SVG element
-      const svgElement = document.querySelector('#diagram svg');
-      
-      if (svgElement) {
-        // Clone the SVG to avoid modifying the original
-        const svgClone = svgElement.cloneNode(true) as SVGElement;
-        
-        // Get the SVG as string
-        const svgString = new XMLSerializer().serializeToString(svgClone);
-        
-        // Create a blob with the SVG content
-        const blob = new Blob([svgString], { type: 'image/svg+xml' });
-        
-        // Try to copy as image first (modern browsers)
-        try {
-          const item = new ClipboardItem({
-            'image/svg+xml': blob,
-            'text/plain': new Blob([svgString], { type: 'text/plain' })
-          });
-          await navigator.clipboard.write([item]);
-          setDiagramCopied(true);
-          setTimeout(() => setDiagramCopied(false), 2000);
-          return;
-        } catch (clipboardErr) {
-          // Fallback: copy as text
-          await navigator.clipboard.writeText(svgString);
-          setDiagramCopied(true);
-          setTimeout(() => setDiagramCopied(false), 2000);
-          return;
-        }
-      }
-      
-      // If SVG not found, copy the mermaid source code
-      if (diagram) {
-        await navigator.clipboard.writeText(diagram);
-        setDiagramCopied(true);
-        setTimeout(() => setDiagramCopied(false), 2000);
-      }
-    } catch (err) {
-      console.error("Failed to copy diagram:", err);
-      // Final fallback: copy the mermaid code
-      try {
-        await navigator.clipboard.writeText(diagram);
-        setDiagramCopied(true);
-        setTimeout(() => setDiagramCopied(false), 2000);
-      } catch (fallbackErr) {
-        console.error("Failed to copy fallback:", fallbackErr);
-      }
-    }
-  };
-
   return (
     <div className="space-y-6">
       {loading ? (
@@ -147,28 +93,9 @@ export const VisualizationPanel: React.FC<VisualizationPanelProps> = ({
       ) : diagram ? (
         <>
           <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-start gap-2.5">
-                <Eye className="h-5 w-5 text-muted-foreground mt-0.5" />
-                <Label className="text-sm font-semibold">System Architecture Diagram</Label>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCopyDiagram}
-              >
-                {diagramCopied ? (
-                  <>
-                    <Check className="h-4 w-4" />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-4 w-4" />
-                    Copy
-                  </>
-                )}
-              </Button>
+            <div className="flex items-start gap-2.5">
+              <Eye className="h-5 w-5 text-muted-foreground mt-0.5" />
+              <Label className="text-sm font-semibold">System Architecture Diagram</Label>
             </div>
             <div className="rounded-md border bg-card p-6 overflow-auto flex items-center justify-center min-h-[280px]">
               <div ref={mermaidRef} id="diagram"></div>
