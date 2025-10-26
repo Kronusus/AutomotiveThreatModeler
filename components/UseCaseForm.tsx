@@ -8,7 +8,7 @@ interface UseCaseFormProps {
 }
 
 export const UseCaseForm: React.FC<UseCaseFormProps> = ({ value, onChange }) => (
-  <div className="space-y-4">
+  <div className="space-y-2">
     <Label htmlFor="use-case-input" className="text-sm font-semibold">
       Narrative
     </Label>

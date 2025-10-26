@@ -18,7 +18,7 @@ export const EffectChainForm: React.FC<EffectChainFormProps> = ({
   onChange,
 }) => (
   <div className="space-y-6">
-    <div className="space-y-4">
+    <div className="space-y-2">
       <Label htmlFor="effect-chain-input" className="text-sm font-semibold">
         Input
       </Label>
@@ -32,7 +32,7 @@ export const EffectChainForm: React.FC<EffectChainFormProps> = ({
       />
     </div>
 
-    <div className="space-y-4">
+    <div className="space-y-2">
       <Label htmlFor="effect-chain-core-logic" className="text-sm font-semibold">
         Core Logic
       </Label>
@@ -46,7 +46,7 @@ export const EffectChainForm: React.FC<EffectChainFormProps> = ({
       />
     </div>
 
-    <div className="space-y-4">
+    <div className="space-y-2">
       <Label htmlFor="effect-chain-output" className="text-sm font-semibold">
         Output
       </Label>

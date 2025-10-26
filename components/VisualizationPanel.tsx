@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import Mermaid from "mermaid-react";
+import React, { useState, useEffect, useRef } from "react";
+import mermaid from "mermaid";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -22,6 +22,20 @@ export const VisualizationPanel: React.FC<VisualizationPanelProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
   const [diagramCopied, setDiagramCopied] = useState(false);
+  const mermaidRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (diagram && mermaidRef.current) {
+      mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
+      mermaid.render('diagram-svg', diagram)
+        .then(({ svg }) => {
+          if (mermaidRef.current) {
+            mermaidRef.current.innerHTML = svg;
+          }
+        })
+        .catch(e => console.error(e));
+    }
+  }, [diagram]);
 
   const handleCopy = async () => {
     try {
@@ -89,7 +103,7 @@ export const VisualizationPanel: React.FC<VisualizationPanelProps> = ({
   return (
     <div className="space-y-6">
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-16 space-y-4 rounded-lg border-2 border-dashed border-border bg-muted/20">
+        <div className="flex flex-col items-center justify-center py-16 space-y-4 rounded-md border-2 border-dashed bg-muted/20">
           <Loader2 className="h-10 w-10 text-primary animate-spin" />
           <div className="text-center space-y-1">
             <p className="text-base font-medium">Generating visualization</p>
@@ -101,8 +115,8 @@ export const VisualizationPanel: React.FC<VisualizationPanelProps> = ({
       ) : error ? (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle className="text-sm font-semibold">Visualization Error</AlertTitle>
-          <AlertDescription className="text-sm mt-1">{error}</AlertDescription>
+          <AlertTitle>Visualization Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : diagram ? (
         <>
@@ -116,23 +130,22 @@ export const VisualizationPanel: React.FC<VisualizationPanelProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={handleCopyDiagram}
-                className="h-8"
               >
                 {diagramCopied ? (
                   <>
-                    <Check className="h-3.5 w-3.5 mr-1.5" />
+                    <Check className="h-4 w-4" />
                     Copied
                   </>
                 ) : (
                   <>
-                    <Copy className="h-3.5 w-3.5 mr-1.5" />
+                    <Copy className="h-4 w-4" />
                     Copy
                   </>
                 )}
               </Button>
             </div>
-            <div className="rounded-lg border-2 border-border bg-card p-6 overflow-auto flex items-center justify-center min-h-[280px]">
-              <Mermaid id="diagram" mmd={diagram} />
+            <div className="rounded-md border bg-card p-6 overflow-auto flex items-center justify-center min-h-[280px]">
+              <div ref={mermaidRef} id="diagram"></div>
             </div>
           </div>
           
@@ -148,16 +161,15 @@ export const VisualizationPanel: React.FC<VisualizationPanelProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={handleCopy}
-                className="h-8"
               >
                 {copied ? (
                   <>
-                    <Check className="h-3.5 w-3.5 mr-1.5" />
+                    <Check className="h-4 w-4" />
                     Copied
                   </>
                 ) : (
                   <>
-                    <Copy className="h-3.5 w-3.5 mr-1.5" />
+                    <Copy className="h-4 w-4" />
                     Copy
                   </>
                 )}
@@ -177,7 +189,7 @@ export const VisualizationPanel: React.FC<VisualizationPanelProps> = ({
           </div>
         </>
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center space-y-4 rounded-lg border-2 border-dashed border-border bg-muted/20">
+        <div className="flex flex-col items-center justify-center py-16 text-center space-y-4 rounded-md border-2 border-dashed bg-muted/20">
           <div className="rounded-full bg-muted p-3">
             <Eye className="h-7 w-7 text-muted-foreground" />
           </div>

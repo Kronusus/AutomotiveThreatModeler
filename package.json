@@ -11,7 +11,7 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "clean": "rm -rf .next node_modules/.cache"
   },
   "dependencies": {
@@ -23,7 +23,6 @@
     "clsx": "^2.1.1",
     "lucide-react": "^0.548.0",
     "mermaid": "^11.12.0",
-    "mermaid-react": "^0.1.0",
     "next": "15.5.4",
     "next-themes": "^0.4.6",
     "pdf-lib": "^1.17.1",
@@ -37,6 +36,8 @@
     "@types/node": "^20",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "eslint": "^9.38.0",
+    "eslint-config-next": "16.0.0",
     "shadcn": "^3.5.0",
     "tailwindcss": "^4",
     "typescript": "^5"

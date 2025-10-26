@@ -42,12 +42,12 @@ export const StepCard: React.FC<StepCardProps> = ({
   return (
     <Card
       className={cn(
-        "shadow-xl border-2 transition-all duration-300",
+        "shadow-md transition-all duration-300",
         isComplete || isActive
-          ? "hover:shadow-2xl"
+          ? "hover:shadow-lg"
           : isLocked
           ? "border-dashed bg-muted/30"
-          : "hover:shadow-2xl",
+          : "hover:shadow-lg",
         className
       )}
     >
@@ -61,12 +61,12 @@ export const StepCard: React.FC<StepCardProps> = ({
           <div className="flex items-center gap-4">
             <div
               className={cn(
-                "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg font-bold text-lg shadow-md transition-all duration-300 border-2",
+                "flex h-10 w-10 shrink-0 items-center justify-center rounded-md font-bold text-lg transition-all duration-300 shadow-sm",
                 isComplete
-                  ? "bg-primary text-primary-foreground border-primary"
+                  ? "bg-primary text-primary-foreground shadow"
                   : isActive
-                  ? "bg-primary text-primary-foreground border-primary shadow-lg"
-                  : "bg-muted text-muted-foreground border-border"
+                  ? "bg-primary text-primary-foreground shadow"
+                  : "bg-muted text-muted-foreground"
               )}
             >
               {isComplete ? (
@@ -87,12 +87,11 @@ export const StepCard: React.FC<StepCardProps> = ({
               onClick={onToggleCollapse}
               aria-expanded={!collapsed}
               title={collapsed ? "Expand" : "Collapse"}
-              className="transition-transform hover:scale-110"
             >
               {collapsed ? (
-                <ChevronDown className="h-5 w-5" />
+                <ChevronDown className="h-4 w-4" />
               ) : (
-                <ChevronUp className="h-5 w-5" />
+                <ChevronUp className="h-4 w-4" />
               )}
             </Button>
           </div>

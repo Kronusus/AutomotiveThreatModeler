@@ -53,6 +53,8 @@ export default function HomePage() {
     
   const handleGenerateVisualization = async () => {
     await generateDiagram(useCase, effectChain, systems);
+    // Focus on "Next step" button after diagram is generated
+    setTimeout(() => nextStep2BtnRef.current?.focus(), 300);
   };
 
   const handlePerformThreatModeling = async () => {
@@ -86,6 +88,7 @@ export default function HomePage() {
 
   // Refs for focusing next-step buttons
   const generateBtnRef = useRef<HTMLButtonElement | null>(null);
+  const nextStep2BtnRef = useRef<HTMLButtonElement | null>(null);
   const analyzeBtnRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
@@ -99,15 +102,15 @@ export default function HomePage() {
   return (
     <>
       {/* Header - Fixed */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 shadow-sm">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8">
           <div className="flex h-14 items-center justify-between gap-4">
-            <div className="flex items-center gap-2.5 min-w-0 flex-1 overflow-hidden">
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground shrink-0">
-                <Shield className="h-4 w-4" />
+            <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">
+              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground shrink-0">
+                <Shield className="h-5 w-5" />
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-sm sm:text-base font-semibold truncate">
+                <h1 className="text-sm sm:text-base font-semibold tracking-tight truncate">
                   Automotive Threat Modeler
                 </h1>
               </div>
@@ -124,7 +127,7 @@ export default function HomePage() {
         <div className="container mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
           <div className="space-y-8 lg:space-y-10">
             {/* Introduction Card */}
-            <Card className="border-2 shadow-lg animate-in fade-in-50 duration-500">
+            <Card className="shadow-md animate-in fade-in-50 duration-500">
               <CardContent className="pt-7 pb-7">
                 <div className="space-y-5">
                   <p className="text-base text-muted-foreground leading-relaxed">
@@ -179,13 +182,12 @@ export default function HomePage() {
                     description="Describe the primary scenario or goal that drives this analysis."
                     headerAction={
                       <Button
-                        variant="outline"
+                        variant="default"
                         onClick={handleExampleData}
-                        className="border-dashed border-2 hover:border-solid hover:bg-primary/[0.06] transition-all"
                         title="Load example data"
                       >
-                        <FileText className="h-4 w-4 mr-2" />
-                        Load Example Data
+                        <FileText className="h-4 w-4" />
+                        Load example
                       </Button>
                     }
                   >
@@ -211,17 +213,18 @@ export default function HomePage() {
                   </FormSection>
 
                   {/* Primary action at bottom right per UX best practices */}
-                  <div className="flex items-center justify-between pt-8 border-t-2 border-border">
+                  <div className="flex items-center justify-between pt-8 border-t">
                     <p className="text-sm text-muted-foreground max-w-md">
                       Complete the use case and add at least one system to proceed.
                     </p>
                     <Button
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-primary disabled:text-primary-foreground"
                       onClick={() => {
                         if (canGenerateVisualization) {
                           setCollapsed1(true);
                           document.getElementById("step-2")?.scrollIntoView({ behavior: "smooth" });
                           setCollapsed2(false);
-                          setTimeout(() => generateBtnRef.current?.focus(), 500);
+                          setTimeout(() => nextStep2BtnRef.current?.focus(), 500);
                         } else {
                           if (useCase.trim() === "") {
                             document.getElementById("use-case-input")?.focus();
@@ -231,10 +234,10 @@ export default function HomePage() {
                         }
                       }}
                       size="lg"
-                      className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg font-semibold transition-colors"
+                      variant="default"
                     >
                       Next step
-                      <ChevronDown className="h-5 w-5 ml-2 rotate-[-90deg] transition-transform" />
+                      <ChevronDown className="h-4 w-4 rotate-[-90deg]" />
                     </Button>
                   </div>
                 </div>
@@ -255,8 +258,8 @@ export default function HomePage() {
               >
                 <div className="space-y-7">
                   {!step2Unlocked && (
-                    <Alert className="border-2">
-                      <AlertDescription className="text-base">
+                    <Alert>
+                      <AlertDescription>
                         Complete the system definition in Step 1 to enable diagram generation.
                       </AlertDescription>
                     </Alert>
@@ -270,7 +273,7 @@ export default function HomePage() {
                   />
 
                   {/* Primary actions at bottom right per UX best practices */}
-                  <div className="flex items-center justify-between pt-8 border-t-2 border-border">
+                  <div className="flex items-center justify-between pt-8 border-t">
                     <p className="text-sm text-muted-foreground max-w-md">
                       {diagram ? "Edit the diagram above or proceed to threat analysis." : "Generate the visualization to continue."}
                     </p>
@@ -281,25 +284,22 @@ export default function HomePage() {
                         size="lg"
                         variant={diagram ? "outline" : "default"}
                         ref={generateBtnRef}
-                        className={cn(
-                          "shadow-md transition-all font-semibold",
-                          !diagram && "bg-primary text-primary-foreground hover:bg-primary/90"
-                        )}
                       >
                         {diagramLoading ? (
                           <>
-                            <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                            <Loader2 className="h-4 w-4 animate-spin" />
                             Generating
                           </>
                         ) : (
                           <>
-                            <Sparkles className="h-5 w-5 mr-2" />
+                            <Sparkles className="h-4 w-4" />
                             {diagram ? "Regenerate" : "Generate"}
                           </>
                         )}
                       </Button>
 
                       <Button
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-primary disabled:text-primary-foreground"
                         onClick={() => {
                           if (hasDiagram) {
                             setCollapsed2(true);
@@ -316,10 +316,11 @@ export default function HomePage() {
                         }}
                         disabled={!hasDiagram}
                         size="lg"
-                        className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg font-semibold transition-colors"
+                        variant="default"
+                        ref={nextStep2BtnRef}
                       >
                         Next step
-                        <ChevronDown className="h-5 w-5 ml-2 rotate-[-90deg] transition-transform" />
+                        <ChevronDown className="h-4 w-4 rotate-[-90deg]" />
                       </Button>
                     </div>
                   </div>
@@ -341,8 +342,8 @@ export default function HomePage() {
               >
                 <div className="space-y-10">
                   {!step3Unlocked && (
-                    <Alert className="animate-in fade-in-50 duration-200 border-2">
-                      <AlertDescription className="text-base">
+                    <Alert className="animate-in fade-in-50 duration-200">
+                      <AlertDescription>
                         Generate and review the system visualization in Step 2 before running the STRIDE analysis.
                       </AlertDescription>
                     </Alert>
@@ -358,7 +359,7 @@ export default function HomePage() {
                   />
 
                   {/* Primary action at bottom right per UX best practices */}
-                  <div className="flex items-center justify-between pt-8 border-t-2 border-border">
+                  <div className="flex items-center justify-between pt-8 border-t">
                     <p className="text-sm text-muted-foreground max-w-md">
                       {hasResults ? "Review the threat analysis results above and export if needed." : "Run the STRIDE analysis to identify security threats."}
                     </p>
@@ -366,18 +367,18 @@ export default function HomePage() {
                       onClick={handlePerformThreatModeling}
                       disabled={!canPerformThreatModeling || resultsLoading}
                       size="lg"
-                      className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg font-semibold transition-colors"
+                      variant="default"
                       ref={analyzeBtnRef}
                     >
                       {resultsLoading ? (
                         <>
-                          <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                          <Loader2 className="h-4 w-4 animate-spin" />
                           Analyzing
                         </>
                       ) : (
                         <>
-                          <Shield className="h-5 w-5 mr-2" />
-                          Analyze Threats
+                          <Shield className="h-4 w-4" />
+                          Analyze threats
                         </>
                       )}
                     </Button>

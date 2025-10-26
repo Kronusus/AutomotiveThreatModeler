@@ -24,7 +24,7 @@ export const HorizontalStepper: React.FC<HorizontalStepperProps> = ({
   className,
 }) => {
   return (
-    <div className={cn("flex items-center gap-2 pt-4 px-2", className)}>
+    <div className={cn("flex items-center gap-2 pt-4 pb-4 px-4 bg-muted/30 rounded-md border", className)}>
       {steps.map((step, index) => {
         const isLast = index === steps.length - 1;
         const showConnector = !isLast;
@@ -35,15 +35,15 @@ export const HorizontalStepper: React.FC<HorizontalStepperProps> = ({
             <div className="flex items-center gap-3 flex-shrink-0">
               <div
                 className={cn(
-                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg font-bold text-sm transition-all duration-300 border-2",
+                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-md font-bold text-sm transition-all duration-300 shadow-sm",
                   step.isComplete
-                    ? "bg-primary text-primary-foreground border-primary"
+                    ? "bg-primary text-primary-foreground shadow"
                     : step.isActive
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-muted text-muted-foreground border-border"
+                    ? "bg-primary text-primary-foreground shadow"
+                    : "bg-muted text-muted-foreground"
                 )}
               >
-                {step.isComplete ? <Check className="h-5 w-5" /> : step.id}
+                {step.isComplete ? <Check className="h-4 w-4" /> : step.id}
               </div>
               <div className="min-w-0 hidden sm:block">
                 <p className="text-sm font-bold truncate">{step.label}</p>

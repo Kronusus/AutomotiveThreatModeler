@@ -32,7 +32,7 @@ export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({
 }) => {
   if (loading) {
     return (
-      <div className="py-16 rounded-lg border-2 border-dashed border-border bg-muted/20">
+      <div className="py-16 rounded-md border-2 border-dashed bg-muted/20">
         <div className="flex flex-col items-center justify-center space-y-4">
           <Loader2 className="h-10 w-10 text-primary animate-spin" />
           <div className="text-center space-y-1">
@@ -58,7 +58,7 @@ export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({
 
   if (results.length === 0) {
     return (
-      <div className="py-16 rounded-lg border-2 border-dashed border-border bg-muted/20">
+      <div className="py-16 rounded-md border-2 border-dashed bg-muted/20">
         <div className="flex flex-col items-center justify-center text-center space-y-4">
           <div className="rounded-full bg-muted p-3">
             <Shield className="h-7 w-7 text-muted-foreground" />
@@ -86,32 +86,29 @@ export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({
           <Button 
             onClick={onExportPDF} 
             size="sm"
-            className="h-9"
           >
-            <FileDown className="h-4 w-4 mr-1.5" />
+            <FileDown className="h-4 w-4" />
             PDF
           </Button>
           <Button 
             onClick={onExportJSON} 
             size="sm"
-            className="h-9"
           >
-            <FileJson className="h-4 w-4 mr-1.5" />
+            <FileJson className="h-4 w-4" />
             JSON
           </Button>
           <Button 
             onClick={onExportCSV} 
             size="sm"
-            className="h-9"
           >
-            <FileSpreadsheet className="h-4 w-4 mr-1.5" />
+            <FileSpreadsheet className="h-4 w-4" />
             CSV
           </Button>
         </div>
       </div>
 
       {/* Results Table */}
-      <div className="rounded-lg border overflow-hidden shadow-sm">
+      <div className="rounded-md border overflow-hidden shadow-sm">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50">

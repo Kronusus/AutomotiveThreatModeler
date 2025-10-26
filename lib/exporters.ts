@@ -108,21 +108,45 @@ export async function exportPDF(data: ExportData): Promise<Uint8Array> {
 
   function drawTable(headers: string[], rows: string[][], columnWidths: number[]) {
     const tableWidth = columnWidths.reduce((a, b) => a + b, 0);
-    const rowHeight = 25;
     const cellPadding = 5;
+    const fontSize = 8;
+    const lineHeight = 10;
     
-    // Check if we need a new page for the table header
-    addNewPageIfNeeded(rowHeight * (rows.length + 1) + 20);
+    // Calculate row heights based on content
+    const rowHeights: number[] = [];
     
-    const startY = y;
+    // Header height
+    rowHeights.push(25);
+    
+    // Calculate each row height
+    for (const row of rows) {
+      let maxLines = 1;
+      for (let i = 0; i < row.length; i++) {
+        const cellText = row[i] || '';
+        const maxTextWidth = columnWidths[i] - 2 * cellPadding;
+        const lines = wrapText(cellText, maxTextWidth, fontSize);
+        maxLines = Math.max(maxLines, lines.length);
+      }
+      const rowHeight = Math.max(25, maxLines * lineHeight + cellPadding * 2);
+      rowHeights.push(rowHeight);
+    }
+    
+    const totalTableHeight = rowHeights.reduce((a, b) => a + b, 0);
+    
+    // Check if we need a new page for the table
+    if (y - totalTableHeight < margin) {
+      page = pdfDoc.addPage();
+      y = height - margin;
+    }
+    
     let currentX = margin;
     
     // Draw header background
     page.drawRectangle({
       x: margin,
-      y: y - rowHeight,
+      y: y - rowHeights[0],
       width: tableWidth,
-      height: rowHeight,
+      height: rowHeights[0],
       color: tableHeaderBg,
     });
     
@@ -132,7 +156,7 @@ export async function exportPDF(data: ExportData): Promise<Uint8Array> {
       // Vertical border
       page.drawLine({
         start: { x: currentX, y: y },
-        end: { x: currentX, y: y - rowHeight },
+        end: { x: currentX, y: y - rowHeights[0] },
         thickness: 0.5,
         color: tableBorder,
       });
@@ -140,7 +164,7 @@ export async function exportPDF(data: ExportData): Promise<Uint8Array> {
       // Header text
       page.drawText(headers[i], {
         x: currentX + cellPadding,
-        y: y - rowHeight + 8,
+        y: y - rowHeights[0] + 8,
         size: 9,
         font: boldFont,
         color: textColor,
@@ -152,7 +176,7 @@ export async function exportPDF(data: ExportData): Promise<Uint8Array> {
     // Right border of header
     page.drawLine({
       start: { x: currentX, y: y },
-      end: { x: currentX, y: y - rowHeight },
+      end: { x: currentX, y: y - rowHeights[0] },
       thickness: 0.5,
       color: tableBorder,
     });
@@ -165,10 +189,13 @@ export async function exportPDF(data: ExportData): Promise<Uint8Array> {
       color: tableBorder,
     });
     
-    y -= rowHeight;
+    y -= rowHeights[0];
     
     // Draw rows
-    for (const row of rows) {
+    for (let rowIdx = 0; rowIdx < rows.length; rowIdx++) {
+      const row = rows[rowIdx];
+      const rowHeight = rowHeights[rowIdx + 1];
+      
       // Check if we need a new page
       if (y - rowHeight < margin) {
         page = pdfDoc.addPage();
@@ -194,25 +221,22 @@ export async function exportPDF(data: ExportData): Promise<Uint8Array> {
           color: tableBorder,
         });
         
-        // Cell text (truncate if too long)
+        // Cell text with wrapping
         const maxTextWidth = columnWidths[i] - 2 * cellPadding;
-        let cellText = row[i] || '';
-        const textWidth = font.widthOfTextAtSize(cellText, 8);
+        const cellText = row[i] || '';
+        const lines = wrapText(cellText, maxTextWidth, fontSize);
         
-        if (textWidth > maxTextWidth) {
-          while (font.widthOfTextAtSize(cellText + '...', 8) > maxTextWidth && cellText.length > 0) {
-            cellText = cellText.slice(0, -1);
-          }
-          cellText += '...';
+        let textY = y - cellPadding - fontSize;
+        for (const line of lines) {
+          page.drawText(line, {
+            x: currentX + cellPadding,
+            y: textY,
+            size: fontSize,
+            font,
+            color: textColor,
+          });
+          textY -= lineHeight;
         }
-        
-        page.drawText(cellText, {
-          x: currentX + cellPadding,
-          y: y - rowHeight + 8,
-          size: 8,
-          font,
-          color: textColor,
-        });
         
         currentX += columnWidths[i];
       }
@@ -239,31 +263,68 @@ export async function exportPDF(data: ExportData): Promise<Uint8Array> {
     y -= 20;
   }
   
+  function wrapText(text: string, maxWidth: number, fontSize: number): string[] {
+    const words = text.split(' ');
+    const lines: string[] = [];
+    let currentLine = '';
+    
+    for (const word of words) {
+      const testLine = currentLine + (currentLine ? ' ' : '') + word;
+      const textWidth = font.widthOfTextAtSize(testLine, fontSize);
+      
+      if (textWidth > maxWidth && currentLine) {
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = testLine;
+      }
+    }
+    
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+    
+    return lines.length > 0 ? lines : [''];
+  }
+  
   // Header
   drawTitle("Automotive Threat Model Report", 24);
   y -= 10;
   drawSeparator();
   
-  // Use Case Section
+  // Use Case Section as Table
   drawHeading("Use Case");
-  drawText(useCase || "Not specified");
-  y -= 10;
+  y -= 5;
+  drawTable(
+    ['Description'],
+    [[useCase || 'Not specified']],
+    [width - 2 * margin]
+  );
   
   // Effect Chain Section
   drawHeading("Effect Chain");
+  const effectChainRows: string[][] = [];
   if (effectChain.input) {
-    drawText("Input:", 10);
-    drawText(effectChain.input, 9, 15);
+    effectChainRows.push(['Input', effectChain.input]);
   }
   if (effectChain.coreLogic) {
-    drawText("Core Logic:", 10);
-    drawText(effectChain.coreLogic, 9, 15);
+    effectChainRows.push(['Core Logic', effectChain.coreLogic]);
   }
   if (effectChain.output) {
-    drawText("Output:", 10);
-    drawText(effectChain.output, 9, 15);
+    effectChainRows.push(['Output', effectChain.output]);
   }
-  y -= 10;
+  
+  if (effectChainRows.length > 0) {
+    y -= 5;
+    drawTable(
+      ['Component', 'Description'],
+      effectChainRows,
+      [100, width - 2 * margin - 100]
+    );
+  } else {
+    drawText("Not specified", 9);
+    y -= 10;
+  }
   
   // Systems Section with Table
   drawHeading("Systems Overview");
@@ -332,26 +393,39 @@ export async function exportPDF(data: ExportData): Promise<Uint8Array> {
   
   drawSeparator();
   
-  // Threats Section with Table
+  // Threats Section - Each threat as its own table
   drawTitle("Threat Analysis Results", 18);
   drawText(`Total Threats Identified: ${results.length}`, 11);
   y -= 15;
   
   if (results.length > 0) {
-    const threatRows = results.map((threat, idx) => [
-      (idx + 1).toString(),
-      threat.asset || '',
-      threat.stride || '',
-      threat.property || '',
-      threat.reasoning || '',
-      threat.damage || ''
-    ]);
-    
-    drawTable(
-      ['#', 'Asset', 'STRIDE', 'Property', 'Reasoning', 'Damage Scenario'],
-      threatRows,
-      [25, 80, 60, 60, 120, 150]
-    );
+    for (let i = 0; i < results.length; i++) {
+      const threat = results[i];
+      
+      // Threat number heading
+      drawHeading(`Threat #${i + 1}`, 11);
+      y -= 5;
+      
+      // Create a table for this threat with full text
+      const threatRows = [
+        ['Asset', threat.asset || 'N/A'],
+        ['Property', threat.property || 'N/A'],
+        ['STRIDE Category', threat.stride || 'N/A'],
+        ['Reasoning', threat.reasoning || 'N/A'],
+        ['Damage Scenario', threat.damage || 'N/A']
+      ];
+      
+      drawTable(
+        ['Field', 'Details'],
+        threatRows,
+        [120, width - 2 * margin - 120]
+      );
+      
+      // Add some space between threats
+      y -= 5;
+    }
+  } else {
+    drawText("No threats identified", 9);
   }
   
   const pdfBytes = await pdfDoc.save();
