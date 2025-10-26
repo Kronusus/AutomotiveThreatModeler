@@ -5,13 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Trash2 } from "lucide-react";
-
-export interface System {
-  name: string;
-  inputs: string;
-  outputs: string;
-  description: string;
-}
+import { System } from "@/lib/types";
 
 interface SystemsFormProps {
   systems: System[];
@@ -45,39 +39,39 @@ export const SystemsForm: React.FC<SystemsFormProps> = ({
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-5">
       {systems.map((sys, idx) => (
         <Card
           key={idx}
-          className="border-2 border-primary/10 bg-card/60 transition-all hover:border-primary/30 hover:shadow-md"
+          className="border-2 bg-card hover:border-primary/20 hover:shadow-md transition-all duration-200"
         >
           <CardHeader className="pb-4">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex-1 min-w-0">
                 <Input
                   value={sys.name || `System ${idx + 1}`}
                   onChange={(e) =>
                     handleSystemChange(idx, "name", e.target.value)
                   }
                   placeholder="Enter system name..."
-                  className="font-semibold text-base h-9 border-0 px-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="font-bold text-lg h-11 border-0 px-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent placeholder:text-muted-foreground/40"
                 />
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => removeSystem(idx)}
-                className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 shrink-0"
+                className="h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10 shrink-0 transition-colors"
                 title="Remove system"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="space-y-4 pb-5">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={`system-inputs-${idx}`} className="text-sm font-medium">
+          <CardContent className="space-y-5 pb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <Label htmlFor={`system-inputs-${idx}`} className="text-sm font-semibold text-foreground">
                   Inputs
                 </Label>
                 <Input
@@ -87,11 +81,12 @@ export const SystemsForm: React.FC<SystemsFormProps> = ({
                   onChange={(e) =>
                     handleSystemChange(idx, "inputs", e.target.value)
                   }
+                  className="h-10 border-input bg-background"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor={`system-outputs-${idx}`} className="text-sm font-medium">
+              <div className="space-y-3">
+                <Label htmlFor={`system-outputs-${idx}`} className="text-sm font-semibold text-foreground">
                   Outputs
                 </Label>
                 <Input
@@ -101,23 +96,24 @@ export const SystemsForm: React.FC<SystemsFormProps> = ({
                   onChange={(e) =>
                     handleSystemChange(idx, "outputs", e.target.value)
                   }
+                  className="h-10 border-input bg-background"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor={`system-description-${idx}`} className="text-sm font-medium">
+            <div className="space-y-3">
+              <Label htmlFor={`system-description-${idx}`} className="text-sm font-semibold text-foreground">
                 Description
               </Label>
               <Textarea
                 id={`system-description-${idx}`}
-                placeholder="Describe the system's function and responsibilities"
+                placeholder="Describe the system's function and responsibilities..."
                 value={sys.description}
                 onChange={(e) =>
                   handleSystemChange(idx, "description", e.target.value)
                 }
-                rows={2}
-                className="resize-none"
+                rows={3}
+                className="resize-none border-input bg-background leading-relaxed"
               />
             </div>
           </CardContent>
@@ -129,9 +125,9 @@ export const SystemsForm: React.FC<SystemsFormProps> = ({
         type="button"
         id="add-system-btn"
         variant="outline"
-        className="w-full border-dashed border-2 h-10 hover:bg-primary/5 hover:border-primary transition-all"
+        className="w-full border-dashed border-2 h-12 hover:bg-primary/5 hover:border-primary transition-colors font-semibold text-sm"
       >
-        <PlusCircle className="h-4 w-4 mr-2" />
+        <PlusCircle className="h-5 w-5 mr-2" />
         Add System
       </Button>
     </div>

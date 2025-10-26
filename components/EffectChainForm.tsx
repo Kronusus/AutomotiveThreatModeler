@@ -17,9 +17,9 @@ export const EffectChainForm: React.FC<EffectChainFormProps> = ({
   value,
   onChange,
 }) => (
-  <div className="space-y-5">
-    <div className="space-y-3">
-      <Label htmlFor="effect-chain-input" className="text-sm font-medium">
+  <div className="space-y-6">
+    <div className="space-y-4">
+      <Label htmlFor="effect-chain-input" className="text-sm font-semibold">
         Input
       </Label>
       <Textarea
@@ -27,13 +27,13 @@ export const EffectChainForm: React.FC<EffectChainFormProps> = ({
         value={value.input}
         onChange={(e) => onChange({ ...value, input: e.target.value })}
         placeholder="Specify all inputs (e.g., Driver Brake Request)"
-        rows={2}
-        className="resize-none"
+        rows={3}
+        className="resize-none text-sm"
       />
     </div>
 
-    <div className="space-y-3">
-      <Label htmlFor="effect-chain-core-logic" className="text-sm font-medium">
+    <div className="space-y-4">
+      <Label htmlFor="effect-chain-core-logic" className="text-sm font-semibold">
         Core Logic
       </Label>
       <Textarea
@@ -41,13 +41,13 @@ export const EffectChainForm: React.FC<EffectChainFormProps> = ({
         value={value.coreLogic}
         onChange={(e) => onChange({ ...value, coreLogic: e.target.value })}
         placeholder="Describe processing logic and control flow"
-        rows={2}
-        className="resize-none"
+        rows={3}
+        className="resize-none text-sm"
       />
     </div>
 
-    <div className="space-y-3">
-      <Label htmlFor="effect-chain-output" className="text-sm font-medium">
+    <div className="space-y-4">
+      <Label htmlFor="effect-chain-output" className="text-sm font-semibold">
         Output
       </Label>
       <Textarea
@@ -55,8 +55,8 @@ export const EffectChainForm: React.FC<EffectChainFormProps> = ({
         value={value.output}
         onChange={(e) => onChange({ ...value, output: e.target.value })}
         placeholder="Define expected outputs (e.g., Vehicle Deceleration)"
-        rows={2}
-        className="resize-none"
+        rows={3}
+        className="resize-none text-sm"
       />
     </div>
   </div>

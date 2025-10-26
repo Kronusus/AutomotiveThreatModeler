@@ -4,117 +4,66 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { UseCaseForm } from "../components/UseCaseForm";
 import { EffectChainForm } from "../components/EffectChainForm";
-import { SystemsForm, System } from "../components/SystemsForm";
+import { SystemsForm } from "../components/SystemsForm";
 import { VisualizationPanel } from "../components/VisualizationPanel";
-import { ThreatModelResults, ThreatModelResult } from "../components/ThreatModelResults";
+import { ThreatModelResults } from "../components/ThreatModelResults";
 import { ThemeToggle } from "../components/theme-toggle";
 import { FormSection } from "@/components/FormSection";
-// Left stepper removed from main layout (moved to inline progress indicators)
+import { HorizontalStepper } from "@/components/HorizontalStepper";
+import { StepCard } from "@/components/StepCard";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, FileText, Sparkles, Shield, Check, ChevronDown, ChevronUp } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Loader2, FileText, Sparkles, Shield, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useVisualization, useThreatModeling, exportThreatModel } from "@/lib/hooks";
+import { EffectChain, System } from "@/lib/types";
+import { EXAMPLE_USE_CASE, EXAMPLE_EFFECT_CHAIN, EXAMPLE_SYSTEMS, STEPS } from "@/lib/constants";
 
 export default function HomePage() {
   const [useCase, setUseCase] = useState("");
-  const [effectChain, setEffectChain] = useState({
+  const [effectChain, setEffectChain] = useState<EffectChain>({
     input: "",
     coreLogic: "",
     output: "",
   });
   const [systems, setSystems] = useState<System[]>([]);
-  const [diagram, setDiagram] = useState("");
-  const [diagramLoading, setDiagramLoading] = useState(false);
-  const [diagramError, setDiagramError] = useState<string | undefined>(undefined);
-  const [results, setResults] = useState<ThreatModelResult[]>([]);
-  const [resultsLoading, setResultsLoading] = useState(false);
-  const [resultsError, setResultsError] = useState<string | undefined>(undefined);
+
+  // Use custom hooks for business logic
+  const {
+    diagram,
+    loading: diagramLoading,
+    error: diagramError,
+    generateDiagram,
+    setDiagram,
+  } = useVisualization();
+
+  const {
+    results,
+    loading: resultsLoading,
+    error: resultsError,
+    analyzeTreats,
+  } = useThreatModeling();
 
   const handleExampleData = () => {
-    setUseCase(
-      "As a Driver, I want to safely and proportionally reduce the vehicle's speed (or bring it to a stop) by applying force to the foot pedal."
-    );
-    setEffectChain({
-      input: "Driver Brake Request (Pedal Force/Position)",
-      coreLogic:
-        "Brake System Control (Interprets request, calculates required actuator effort, and manages stability/safety functions like ABS/ESC).",
-      output:
-        "Vehicle Deceleration/Speed Reduction achieved through friction and kinetic energy conversion.",
-    });
-    setSystems([
-      {
-        name: "Brake input Processor",
-        inputs: "BrakePedalPosition (Raw sensor signal)",
-        outputs: "RequestedBrakeDemand (Normalized percentage 0-100%)",
-        description:
-          "This system measures the physical input (position and/or force) applied by the driver. It translates the raw signal into a normalized brake demand and performs initial safety and plausibility checks on the sensor data.",
-      },
-      {
-        name: "Brake Provider",
-        inputs: "RequestedBrakeDemand",
-        outputs: "ActuatorTargetPressure",
-        description:
-          "This system calculates the required braking force for each wheel, considering the driver's request and integrating safety functions (e.g., ABS/ESC to prevent wheel lock or instability). It maps the high-level percentage request to a specific physical command value (e.g., target pressure or actuator current), based on an internal value table.",
-      },
-    ]);
+    setUseCase(EXAMPLE_USE_CASE);
+    setEffectChain(EXAMPLE_EFFECT_CHAIN);
+    setSystems(EXAMPLE_SYSTEMS);
   };
     
   const handleGenerateVisualization = async () => {
-    setDiagramLoading(true);
-    setDiagramError(undefined);
-    try {
-      const res = await fetch("/api/visualization", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ useCase, effectChain, systems }),
-      });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.error || "Error during visualization");
-      setDiagram(data.diagram);
-    } catch (e: any) {
-      setDiagramError(e.message);
-    } finally {
-      setDiagramLoading(false);
-    }
+    await generateDiagram(useCase, effectChain, systems);
   };
 
   const handlePerformThreatModeling = async () => {
-    setResultsLoading(true);
-    setResultsError(undefined);
-    try {
-      const res = await fetch("/api/threatmodel", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ useCase, effectChain, systems, diagram }),
-      });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.error || "Error during threat modeling analysis");
-      setResults(data.results);
-    } catch (e: any) {
-      setResultsError(e.message);
-    } finally {
-      setResultsLoading(false);
-    }
+    await analyzeTreats(useCase, effectChain, systems, diagram);
   };
 
   const handleExport = async (type: "pdf" | "csv" | "json") => {
     try {
-      const res = await fetch(`/api/export?type=${type}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ useCase, effectChain, systems, diagram, results }),
-      });
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `threatmodel.${type}`;
-      a.click();
-      window.URL.revokeObjectURL(url);
+      await exportThreatModel(type, { useCase, effectChain, systems, diagram, results });
     } catch (e) {
-      console.error("Export failed:", e);
-      alert("Export failed. Please try again.");
+      alert((e as Error).message);
     }
   };
 
@@ -150,15 +99,15 @@ export default function HomePage() {
   return (
     <>
       {/* Header - Fixed */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 shadow-sm">
         <div className="container mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between gap-4">
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 overflow-hidden">
-              <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shrink-0">
-                <Shield className="h-4 w-4 sm:h-5 sm:w-5" />
+          <div className="flex h-14 items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 min-w-0 flex-1 overflow-hidden">
+              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground shrink-0">
+                <Shield className="h-4 w-4" />
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-base sm:text-lg font-bold tracking-tight truncate">
+                <h1 className="text-sm sm:text-base font-semibold truncate">
                   Automotive Threat Modeler
                 </h1>
               </div>
@@ -171,145 +120,76 @@ export default function HomePage() {
       </header>
 
       {/* Main Content */}
-      <main className="min-h-[calc(100vh-4rem)] bg-gradient-to-br from-background via-primary/5 to-background">
-        <div className="container mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
-          <div className="space-y-6 lg:space-y-8">
+      <main className="min-h-[calc(100vh-4rem)] bg-background">
+        <div className="container mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+          <div className="space-y-8 lg:space-y-10">
             {/* Introduction Card */}
-            <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-background animate-in fade-in-50 duration-500">
-              <CardContent className="pt-6 pb-6">
-                <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+            <Card className="border-2 shadow-lg animate-in fade-in-50 duration-500">
+              <CardContent className="pt-7 pb-7">
+                <div className="space-y-5">
+                  <p className="text-base text-muted-foreground leading-relaxed">
                     A systematic approach to identify security threats in automotive systems using the STRIDE methodology. 
                     Follow the three-step process below to define your system, generate an architecture diagram, and analyze potential vulnerabilities.
                   </p>
                   
                   {/* Horizontal Stepper */}
-                  <div className="flex items-center gap-4 pt-3 px-2">
-                    {/* Step 1 */}
-                    <div className="flex items-center gap-2.5">
-                      <div className={cn(
-                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-medium text-[11px] transition-all duration-300 border",
-                        step2Unlocked 
-                          ? "bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-500" 
-                          : "bg-primary/5 text-primary border-primary/30"
-                      )}>
-                        {step2Unlocked ? <Check className="h-3 w-3" /> : "1"}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-semibold truncate">Define System</p>
-                        <p className="text-[10px] text-muted-foreground truncate hidden sm:block">Specify components</p>
-                      </div>
-                    </div>
-                    
-                    {/* Connector - always visible */}
-                    <div className={cn(
-                      "h-[2px] flex-1 transition-colors duration-300",
-                      step2Unlocked ? "bg-green-400" : "bg-gray-200/60 dark:bg-gray-700/60"
-                    )} />
-                    
-                    {/* Step 2 */}
-                    <div className="flex items-center gap-2.5">
-                      <div className={cn(
-                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-medium text-[11px] transition-all duration-300 border",
-                        hasDiagram 
-                          ? "bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-500" 
-                          : step2Unlocked
-                          ? "bg-primary/5 text-primary border-primary/30 shadow-[0_0_0_3px_rgba(34,197,94,0.08)]"
-                          : "bg-muted/30 text-muted-foreground border-muted-foreground/20"
-                      )}>
-                        {hasDiagram ? <Check className="h-3 w-3" /> : "2"}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-semibold truncate">Generate Diagram</p>
-                        <p className="text-[10px] text-muted-foreground truncate hidden sm:block">AI visualization</p>
-                      </div>
-                    </div>
-                    
-                    {/* Connector - always visible */}
-                    <div className={cn(
-                      "h-[2px] flex-1 transition-colors duration-300",
-                      hasDiagram ? "bg-green-400" : "bg-gray-200/60 dark:bg-gray-700/60"
-                    )} />
-                    
-                    {/* Step 3 */}
-                    <div className="flex items-center gap-2.5">
-                      <div className={cn(
-                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-medium text-[11px] transition-all duration-300 border",
-                        hasResults
-                          ? "bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-500"
-                          : step3Unlocked
-                          ? "bg-primary/5 text-primary border-primary/30 shadow-[0_0_0_3px_rgba(34,197,94,0.08)]"
-                          : "bg-muted/30 text-muted-foreground border-muted-foreground/20"
-                      )}>
-                        {hasResults ? <Check className="h-3 w-3" /> : "3"}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-semibold truncate">Analyze Threats</p>
-                        <p className="text-[10px] text-muted-foreground truncate hidden sm:block">STRIDE analysis</p>
-                      </div>
-                    </div>
-                  </div>
+                  <HorizontalStepper
+                    steps={[
+                      {
+                        id: 1,
+                        label: STEPS[0].label,
+                        subtitle: STEPS[0].subtitle,
+                        isComplete: step2Unlocked,
+                        isActive: !step2Unlocked,
+                      },
+                      {
+                        id: 2,
+                        label: STEPS[1].label,
+                        subtitle: STEPS[1].subtitle,
+                        isComplete: hasDiagram,
+                        isActive: step2Unlocked && !hasDiagram,
+                      },
+                      {
+                        id: 3,
+                        label: STEPS[2].label,
+                        subtitle: STEPS[2].subtitle,
+                        isComplete: hasResults,
+                        isActive: step3Unlocked && !hasResults,
+                      },
+                    ]}
+                  />
                 </div>
               </CardContent>
             </Card>
 
             {/* Step 1: Define System */}
             <section id="step-1" className="scroll-mt-20">
-              <Card className="shadow-lg border-2 border-primary/20 transition-all hover:shadow-xl duration-300 hover:border-primary/30">
-                <CardHeader className="space-y-1 bg-gradient-to-r from-primary/10 to-transparent pb-5">
-                  <div className="flex items-start justify-between gap-3 w-full">
-                    <div className="flex items-start gap-3">
-                      <div className={cn(
-                        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-medium text-sm shadow-sm transition-all duration-300 border-2",
-                        step2Unlocked 
-                          ? "bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-500" 
-                          : "bg-primary/5 text-primary border-primary/30"
-                      )}>
-                        {step2Unlocked ? (
-                          <Check className="h-4 w-4 animate-in zoom-in-50 duration-300" />
-                        ) : (
-                          "1"
-                        )}
-                      </div>
-                      <div className="space-y-1">
-                        <CardTitle className="text-xl sm:text-2xl">Define System</CardTitle>
-                        <CardDescription className="text-sm">
-                          Configure your automotive system details
-                        </CardDescription>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setCollapsed1((s) => !s)}
-                        aria-expanded={!collapsed1}
-                        title={collapsed1 ? "Expand" : "Collapse"}
-                        className="transition-transform hover:scale-110"
-                      >
-                        {collapsed1 ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                {!collapsed1 && (
-                <CardContent className="pt-6 space-y-8 pb-8 animate-in fade-in-50 slide-in-from-top-4 duration-300">
+              <StepCard
+                stepNumber={1}
+                title={STEPS[0].title}
+                description={STEPS[0].description}
+                isComplete={step2Unlocked}
+                isActive={!step2Unlocked}
+                collapsed={collapsed1}
+                onToggleCollapse={() => setCollapsed1((s) => !s)}
+              >
+                <div className="space-y-10">
                   <FormSection
                     title="Use Case"
                     description="Describe the primary scenario or goal that drives this analysis."
-                  >
-                    <div className="space-y-4">
-                      <UseCaseForm value={useCase} onChange={setUseCase} />
+                    headerAction={
                       <Button
                         variant="outline"
                         onClick={handleExampleData}
-                        className="w-full sm:w-auto border-dashed hover:border-solid hover:bg-primary/5 transition-all"
+                        className="border-dashed border-2 hover:border-solid hover:bg-primary/[0.06] transition-all"
                         title="Load example data"
                       >
                         <FileText className="h-4 w-4 mr-2" />
                         Load Example Data
                       </Button>
-                    </div>
+                    }
+                  >
+                    <UseCaseForm value={useCase} onChange={setUseCase} />
                   </FormSection>
 
                   <FormSection
@@ -331,14 +211,14 @@ export default function HomePage() {
                   </FormSection>
 
                   {/* Primary action at bottom right per UX best practices */}
-                  <div className="flex items-center justify-between pt-8 border-t">
-                    <p className="text-sm text-muted-foreground">
+                  <div className="flex items-center justify-between pt-8 border-t-2 border-border">
+                    <p className="text-sm text-muted-foreground max-w-md">
                       Complete the use case and add at least one system to proceed.
                     </p>
                     <Button
                       onClick={() => {
                         if (canGenerateVisualization) {
-                          setCollapsed1(true); // Collapse current step
+                          setCollapsed1(true);
                           document.getElementById("step-2")?.scrollIntoView({ behavior: "smooth" });
                           setCollapsed2(false);
                           setTimeout(() => generateBtnRef.current?.focus(), 500);
@@ -351,79 +231,32 @@ export default function HomePage() {
                         }
                       }}
                       size="lg"
-                      className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg font-semibold transition-all"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg font-semibold transition-colors"
                     >
                       Next step
-                      <ChevronDown className="h-4 w-4 ml-2 rotate-[-90deg] transition-transform" />
+                      <ChevronDown className="h-5 w-5 ml-2 rotate-[-90deg] transition-transform" />
                     </Button>
                   </div>
-                </CardContent>
-                )}
-              </Card>
+                </div>
+              </StepCard>
             </section>
 
             {/* Step 2: Generate Visualization */}
             <section id="step-2" className="scroll-mt-20">
-              <Card
-                className={cn(
-                  "shadow-lg border-2 transition-all duration-300",
-                  hasDiagram || diagramLoading
-                    ? "border-primary/20 hover:shadow-xl hover:border-primary/30"
-                    : step2Unlocked
-                    ? "border-border hover:border-primary/30"
-                    : "border-dashed border-border/60 bg-muted/20"
-                )}
+              <StepCard
+                stepNumber={2}
+                title={STEPS[1].title}
+                description={STEPS[1].description}
+                isComplete={hasDiagram}
+                isActive={step2Unlocked && !hasDiagram}
+                isLocked={!step2Unlocked}
+                collapsed={collapsed2}
+                onToggleCollapse={() => setCollapsed2((s) => !s)}
               >
-                <CardHeader
-                  className={cn(
-                    "space-y-1 pb-5 transition-colors duration-300",
-                    hasDiagram || diagramLoading
-                      ? "bg-gradient-to-r from-primary/10 to-transparent"
-                      : step2Unlocked
-                      ? "bg-muted/10"
-                      : "bg-muted/20"
-                  )}
-                >
-                  <div className="flex items-start justify-between gap-3 w-full">
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={cn(
-                          "flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-medium text-sm shadow-sm transition-all duration-300 border-2",
-                          hasDiagram
-                            ? "bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-500"
-                            : step2Unlocked
-                            ? "bg-primary/5 text-primary border-primary/30 shadow-[0_0_0_4px_rgba(34,197,94,0.15)]"
-                            : "bg-muted/30 text-muted-foreground border-muted-foreground/20"
-                        )}
-                      >
-                        {hasDiagram ? <Check className="h-4 w-4 animate-in zoom-in-50 duration-300" /> : "2"}
-                      </div>
-                      <div className="space-y-1">
-                        <CardTitle className="text-xl sm:text-2xl">Generate Visualization</CardTitle>
-                        <CardDescription className="text-sm">
-                          Transform your inputs into an interactive system diagram
-                        </CardDescription>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setCollapsed2((s) => !s)}
-                        aria-expanded={!collapsed2}
-                        title={collapsed2 ? "Expand" : "Collapse"}
-                        className="transition-transform hover:scale-110"
-                      >
-                        {collapsed2 ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                {!collapsed2 && (
-                <CardContent className="pt-6 space-y-6 pb-8">
+                <div className="space-y-7">
                   {!step2Unlocked && (
-                    <Alert>
-                      <AlertDescription className="text-sm">
+                    <Alert className="border-2">
+                      <AlertDescription className="text-base">
                         Complete the system definition in Step 1 to enable diagram generation.
                       </AlertDescription>
                     </Alert>
@@ -437,8 +270,8 @@ export default function HomePage() {
                   />
 
                   {/* Primary actions at bottom right per UX best practices */}
-                  <div className="flex items-center justify-between pt-6 border-t">
-                    <p className="text-sm text-muted-foreground">
+                  <div className="flex items-center justify-between pt-8 border-t-2 border-border">
+                    <p className="text-sm text-muted-foreground max-w-md">
                       {diagram ? "Edit the diagram above or proceed to threat analysis." : "Generate the visualization to continue."}
                     </p>
                     <div className="flex items-center gap-3">
@@ -449,18 +282,18 @@ export default function HomePage() {
                         variant={diagram ? "outline" : "default"}
                         ref={generateBtnRef}
                         className={cn(
-                          "shadow-md transition-all",
+                          "shadow-md transition-all font-semibold",
                           !diagram && "bg-primary text-primary-foreground hover:bg-primary/90"
                         )}
                       >
                         {diagramLoading ? (
                           <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            <Loader2 className="h-5 w-5 mr-2 animate-spin" />
                             Generating
                           </>
                         ) : (
                           <>
-                            <Sparkles className="h-4 w-4 mr-2" />
+                            <Sparkles className="h-5 w-5 mr-2" />
                             {diagram ? "Regenerate" : "Generate"}
                           </>
                         )}
@@ -469,7 +302,7 @@ export default function HomePage() {
                       <Button
                         onClick={() => {
                           if (hasDiagram) {
-                            setCollapsed2(true); // Collapse current step
+                            setCollapsed2(true);
                             document.getElementById("step-3")?.scrollIntoView({ behavior: "smooth" });
                             setCollapsed3(false);
                             setTimeout(() => analyzeBtnRef.current?.focus(), 500);
@@ -483,80 +316,33 @@ export default function HomePage() {
                         }}
                         disabled={!hasDiagram}
                         size="lg"
-                        className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg font-semibold transition-all"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg font-semibold transition-colors"
                       >
                         Next step
-                        <ChevronDown className="h-4 w-4 ml-2 rotate-[-90deg] transition-transform" />
+                        <ChevronDown className="h-5 w-5 ml-2 rotate-[-90deg] transition-transform" />
                       </Button>
                     </div>
                   </div>
-                </CardContent>
-                )}
-              </Card>
+                </div>
+              </StepCard>
             </section>
 
             {/* Step 3: Analyze Threats */}
             <section id="step-3" className="scroll-mt-20">
-              <Card
-                className={cn(
-                  "shadow-lg border-2 transition-all duration-300",
-                  hasResults
-                    ? "border-primary/20 hover:shadow-xl hover:border-primary/30"
-                    : step3Unlocked
-                    ? "border-border hover:border-primary/30"
-                    : "border-dashed border-border/60 bg-muted/20"
-                )}
+              <StepCard
+                stepNumber={3}
+                title={STEPS[2].title}
+                description={STEPS[2].description}
+                isComplete={hasResults}
+                isActive={step3Unlocked && !hasResults}
+                isLocked={!step3Unlocked}
+                collapsed={collapsed3}
+                onToggleCollapse={() => setCollapsed3((s) => !s)}
               >
-                <CardHeader
-                  className={cn(
-                    "space-y-1 pb-5 transition-colors duration-300",
-                    hasResults
-                      ? "bg-gradient-to-r from-primary/10 to-transparent"
-                      : step3Unlocked
-                      ? "bg-muted/10"
-                      : "bg-muted/20"
-                  )}
-                >
-                  <div className="flex items-start justify-between gap-3 w-full">
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={cn(
-                          "flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-medium text-sm shadow-sm transition-all duration-300 border-2",
-                          hasResults
-                            ? "bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-500"
-                            : step3Unlocked
-                            ? "bg-primary/5 text-primary border-primary/30 shadow-[0_0_0_4px_rgba(34,197,94,0.15)]"
-                            : "bg-muted/30 text-muted-foreground border-muted-foreground/20"
-                        )}
-                      >
-                        {hasResults ? <Check className="h-4 w-4 animate-in zoom-in-50 duration-300" /> : "3"}
-                      </div>
-                      <div className="space-y-1">
-                        <CardTitle className="text-xl sm:text-2xl">Threat Analysis</CardTitle>
-                        <CardDescription className="text-sm">
-                          Evaluate security posture with STRIDE methodology
-                        </CardDescription>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setCollapsed3((s) => !s)}
-                        aria-expanded={!collapsed3}
-                        title={collapsed3 ? "Expand" : "Collapse"}
-                        className="transition-transform hover:scale-110"
-                      >
-                        {collapsed3 ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                {!collapsed3 && (
-                <CardContent className="pt-6 space-y-8 pb-8 animate-in fade-in-50 slide-in-from-top-4 duration-300">
+                <div className="space-y-10">
                   {!step3Unlocked && (
-                    <Alert className="animate-in fade-in-50 duration-200">
-                      <AlertDescription className="text-sm">
+                    <Alert className="animate-in fade-in-50 duration-200 border-2">
+                      <AlertDescription className="text-base">
                         Generate and review the system visualization in Step 2 before running the STRIDE analysis.
                       </AlertDescription>
                     </Alert>
@@ -572,33 +358,32 @@ export default function HomePage() {
                   />
 
                   {/* Primary action at bottom right per UX best practices */}
-                  <div className="flex items-center justify-between pt-8 border-t">
-                    <p className="text-sm text-muted-foreground">
+                  <div className="flex items-center justify-between pt-8 border-t-2 border-border">
+                    <p className="text-sm text-muted-foreground max-w-md">
                       {hasResults ? "Review the threat analysis results above and export if needed." : "Run the STRIDE analysis to identify security threats."}
                     </p>
                     <Button
                       onClick={handlePerformThreatModeling}
                       disabled={!canPerformThreatModeling || resultsLoading}
                       size="lg"
-                      className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg font-semibold transition-all"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg font-semibold transition-colors"
                       ref={analyzeBtnRef}
                     >
                       {resultsLoading ? (
                         <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          <Loader2 className="h-5 w-5 mr-2 animate-spin" />
                           Analyzing
                         </>
                       ) : (
                         <>
-                          <Shield className="h-4 w-4 mr-2" />
+                          <Shield className="h-5 w-5 mr-2" />
                           Analyze Threats
                         </>
                       )}
                     </Button>
                   </div>
-                </CardContent>
-                )}
-              </Card>
+                </div>
+              </StepCard>
             </section>
           </div>
         </div>

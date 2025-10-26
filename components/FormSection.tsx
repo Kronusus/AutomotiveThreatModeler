@@ -7,6 +7,7 @@ interface FormSectionProps {
   children: React.ReactNode;
   className?: string;
   footer?: React.ReactNode;
+  headerAction?: React.ReactNode;
 }
 
 export const FormSection: React.FC<FormSectionProps> = ({
@@ -15,22 +16,26 @@ export const FormSection: React.FC<FormSectionProps> = ({
   children,
   className,
   footer,
+  headerAction,
 }) => {
   return (
     <section
       className={cn(
-        "space-y-4",
+        "space-y-5",
         className
       )}
     >
-      <header className="space-y-1">
-        <h3 className="text-base font-semibold text-foreground">{title}</h3>
+      <header className="space-y-2">
+        <div className="flex items-center justify-between gap-4">
+          <h3 className="text-lg font-bold text-foreground">{title}</h3>
+          {headerAction && <div>{headerAction}</div>}
+        </div>
         {description && (
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
         )}
       </header>
       <div className="space-y-4">{children}</div>
-      {footer && <div className="mt-4 border-t border-border pt-4">{footer}</div>}
+      {footer && <div className="mt-6 pt-6 border-t border-border">{footer}</div>}
     </section>
   );
 };

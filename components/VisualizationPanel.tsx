@@ -35,35 +35,44 @@ export const VisualizationPanel: React.FC<VisualizationPanelProps> = ({
 
   const handleCopyDiagram = async () => {
     try {
-      // Get the rendered SVG element
+      // First, try to get the rendered SVG element
       const svgElement = document.querySelector('#diagram svg');
-      if (!svgElement) {
-        throw new Error('SVG element not found');
+      
+      if (svgElement) {
+        // Clone the SVG to avoid modifying the original
+        const svgClone = svgElement.cloneNode(true) as SVGElement;
+        
+        // Get the SVG as string
+        const svgString = new XMLSerializer().serializeToString(svgClone);
+        
+        // Create a blob with the SVG content
+        const blob = new Blob([svgString], { type: 'image/svg+xml' });
+        
+        // Try to copy as image first (modern browsers)
+        try {
+          const item = new ClipboardItem({
+            'image/svg+xml': blob,
+            'text/plain': new Blob([svgString], { type: 'text/plain' })
+          });
+          await navigator.clipboard.write([item]);
+          setDiagramCopied(true);
+          setTimeout(() => setDiagramCopied(false), 2000);
+          return;
+        } catch (clipboardErr) {
+          // Fallback: copy as text
+          await navigator.clipboard.writeText(svgString);
+          setDiagramCopied(true);
+          setTimeout(() => setDiagramCopied(false), 2000);
+          return;
+        }
       }
-
-      // Clone the SVG to avoid modifying the original
-      const svgClone = svgElement.cloneNode(true) as SVGElement;
       
-      // Get the SVG as string
-      const svgString = new XMLSerializer().serializeToString(svgClone);
-      
-      // Create a blob with the SVG content
-      const blob = new Blob([svgString], { type: 'image/svg+xml' });
-      
-      // Try to copy as image first (modern browsers)
-      try {
-        const item = new ClipboardItem({
-          'image/svg+xml': blob,
-          'text/plain': new Blob([svgString], { type: 'text/plain' })
-        });
-        await navigator.clipboard.write([item]);
-      } catch (clipboardErr) {
-        // Fallback: copy as text
-        await navigator.clipboard.writeText(svgString);
+      // If SVG not found, copy the mermaid source code
+      if (diagram) {
+        await navigator.clipboard.writeText(diagram);
+        setDiagramCopied(true);
+        setTimeout(() => setDiagramCopied(false), 2000);
       }
-      
-      setDiagramCopied(true);
-      setTimeout(() => setDiagramCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy diagram:", err);
       // Final fallback: copy the mermaid code
@@ -99,9 +108,9 @@ export const VisualizationPanel: React.FC<VisualizationPanelProps> = ({
         <>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Eye className="h-4 w-4 text-muted-foreground" />
-                <Label className="text-sm font-medium">System Architecture Diagram</Label>
+              <div className="flex items-start gap-2.5">
+                <Eye className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <Label className="text-sm font-semibold">System Architecture Diagram</Label>
               </div>
               <Button
                 variant="outline"
@@ -129,9 +138,9 @@ export const VisualizationPanel: React.FC<VisualizationPanelProps> = ({
           
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Code2 className="h-4 w-4 text-muted-foreground" />
-                <Label htmlFor="diagram-editor" className="text-sm font-medium">
+              <div className="flex items-start gap-2.5">
+                <Code2 className="h-5 w-5 text-muted-foreground mt-0.5" />
+                <Label htmlFor="diagram-editor" className="text-sm font-semibold">
                   Diagram Source Code
                 </Label>
               </div>

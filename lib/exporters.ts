@@ -1,6 +1,6 @@
 
 import { PDFDocument, StandardFonts, rgb, PDFPage } from "pdf-lib";
-import { ThreatModelResult } from "../components/ThreatModelResults";
+import { ThreatModelResult } from "@/lib/types";
 
 interface ExportData {
   useCase: string;

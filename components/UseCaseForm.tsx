@@ -8,7 +8,7 @@ interface UseCaseFormProps {
 }
 
 export const UseCaseForm: React.FC<UseCaseFormProps> = ({ value, onChange }) => (
-  <div className="space-y-3">
+  <div className="space-y-4">
     <Label htmlFor="use-case-input" className="text-sm font-semibold">
       Narrative
     </Label>
@@ -18,7 +18,7 @@ export const UseCaseForm: React.FC<UseCaseFormProps> = ({ value, onChange }) => 
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder="e.g., As a Driver, I want to safely brake the vehicle using the foot pedal"
-      className="h-10"
+      className="h-11 text-base"
     />
   </div>
 );
