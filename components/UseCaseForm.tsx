@@ -1,4 +1,6 @@
 import React from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface UseCaseFormProps {
   value: string;
@@ -6,20 +8,18 @@ interface UseCaseFormProps {
 }
 
 export const UseCaseForm: React.FC<UseCaseFormProps> = ({ value, onChange }) => (
-  <div className="card shadow-md p-6 mb-6">
-    <label
-      htmlFor="use-case-input"
-      className="block text-lg font-bold mb-2 text-foreground/80"
-    >
-      Use Case
-    </label>
-    <input
+  <div className="space-y-3">
+    <Label htmlFor="use-case-input" className="text-sm font-semibold">
+      Narrative
+    </Label>
+    <Input
       id="use-case-input"
       type="text"
-      className="input w-full"
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      placeholder="e.g. 'Brake the vehicle using foot pedal'"
+      placeholder="e.g., As a Driver, I want to safely brake the vehicle using the foot pedal"
+      className="h-10"
     />
   </div>
 );
+

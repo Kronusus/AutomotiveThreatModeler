@@ -1,4 +1,6 @@
 import * as React from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface EffectChainValue {
   input: string;
@@ -15,61 +17,47 @@ export const EffectChainForm: React.FC<EffectChainFormProps> = ({
   value,
   onChange,
 }) => (
-  <div className="card shadow-md p-6 mb-6">
-    <h3 className="block text-lg font-bold mb-4 text-foreground/80">
-      Effect Chain
-    </h3>
-    <div className="space-y-4">
-      <div>
-        <label
-          htmlFor="effect-chain-input"
-          className="block text-sm font-bold mb-1 text-foreground/70"
-        >
-          Input
-        </label>
-        <textarea
-          id="effect-chain-input"
-          className="input w-full"
-          value={value.input}
-          onChange={(e) => onChange({ ...value, input: e.target.value })}
-          placeholder="List all overall inputs for the respective use case"
-          rows={2}
-        />
-      </div>
-      <div>
-        <label
-          htmlFor="effect-chain-core-logic"
-          className="block text-sm font-bold mb-1 text-foreground/70"
-        >
-          Core Logic
-        </label>
-        <textarea
-          id="effect-chain-core-logic"
-          className="input w-full"
-          value={value.coreLogic}
-          onChange={(e) =>
-            onChange({ ...value, coreLogic: e.target.value })
-          }
-          placeholder="Describe the general logic that processes the input to derive the output"
-          rows={2}
-        />
-      </div>
-      <div>
-        <label
-          htmlFor="effect-chain-output"
-          className="block text-sm font-bold mb-1 text-foreground/70"
-        >
-          Output
-        </label>
-        <textarea
-          id="effect-chain-output"
-          className="input w-full"
-          value={value.output}
-          onChange={(e) => onChange({ ...value, output: e.target.value })}
-          placeholder="List all outputs of the respective use case"
-          rows={2}
-        />
-      </div>
+  <div className="space-y-5">
+    <div className="space-y-3">
+      <Label htmlFor="effect-chain-input" className="text-sm font-medium">
+        Input
+      </Label>
+      <Textarea
+        id="effect-chain-input"
+        value={value.input}
+        onChange={(e) => onChange({ ...value, input: e.target.value })}
+        placeholder="Specify all inputs (e.g., Driver Brake Request)"
+        rows={2}
+        className="resize-none"
+      />
+    </div>
+
+    <div className="space-y-3">
+      <Label htmlFor="effect-chain-core-logic" className="text-sm font-medium">
+        Core Logic
+      </Label>
+      <Textarea
+        id="effect-chain-core-logic"
+        value={value.coreLogic}
+        onChange={(e) => onChange({ ...value, coreLogic: e.target.value })}
+        placeholder="Describe processing logic and control flow"
+        rows={2}
+        className="resize-none"
+      />
+    </div>
+
+    <div className="space-y-3">
+      <Label htmlFor="effect-chain-output" className="text-sm font-medium">
+        Output
+      </Label>
+      <Textarea
+        id="effect-chain-output"
+        value={value.output}
+        onChange={(e) => onChange({ ...value, output: e.target.value })}
+        placeholder="Define expected outputs (e.g., Vehicle Deceleration)"
+        rows={2}
+        className="resize-none"
+      />
     </div>
   </div>
 );
