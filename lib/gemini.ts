@@ -46,7 +46,7 @@ export async function getGeminiResponse(prompt: string): Promise<any> {
     let parsed;
     try {
       parsed = JSON.parse(text);
-    } catch (e) {
+    } catch {
       throw new Error("Gemini API returned invalid JSON: " + text);
     }
     return parsed;

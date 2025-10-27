@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       } else {
         return NextResponse.json({ success: false, error: `Diagram invalid after AI fix: ${error}` });
       }
-    } catch (fixError) {
+    } catch {
       return NextResponse.json({ success: false, error: `Diagram invalid and AI fix failed: ${error}` });
     }
   } catch (e: any) {

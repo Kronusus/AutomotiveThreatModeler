@@ -1,6 +1,6 @@
 
 "use client";
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { UseCaseForm } from "../components/UseCaseForm";
 import { EffectChainForm } from "../components/EffectChainForm";
 import { SystemsForm } from "../components/SystemsForm";
@@ -10,8 +10,7 @@ import { FormSection } from "@/components/FormSection";
 import { StepCard } from "@/components/StepCard";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, FileText, Sparkles, Shield, ChevronDown, CheckCircle2, AlertCircle, RotateCcw } from "lucide-react";
+import { Loader2, FileText, Sparkles, Shield, ChevronDown, AlertCircle, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useVisualization, useThreatModeling, exportThreatModel } from "@/lib/hooks";
 import { EffectChain, System } from "@/lib/types";
@@ -118,14 +117,6 @@ export default function HomePage() {
   const hasDiagram = Boolean(diagram);
   const hasResults = results.length > 0;
 
-  const currentStage = useMemo(() => {
-    if (resultsLoading || hasResults) return 3;
-    if (diagramLoading || hasDiagram) return 2;
-    return 1;
-  }, [resultsLoading, hasResults, diagramLoading, hasDiagram]);
-
-  // inline header progress indicators used instead of a left stepper
-
   // Collapse state for each step card
   const [collapsed1, setCollapsed1] = useState(false);
   const [collapsed2, setCollapsed2] = useState(false);
@@ -139,10 +130,6 @@ export default function HomePage() {
   const canPerformThreatModeling = hasDiagram;
   const step2Unlocked = canGenerateVisualization;
   const step3Unlocked = hasDiagram;
-
-  useEffect(() => {
-    // placeholder for side-effects when stage changes
-  }, [currentStage]);
 
   return (
     <>

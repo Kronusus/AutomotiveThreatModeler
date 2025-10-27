@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -84,15 +84,6 @@ export const SystemsForm: React.FC<SystemsFormProps> = ({
     return sys.name.trim() !== "" && sys.description.trim() !== "";
   };
 
-  const getSystemCompletionPercentage = (sys: System) => {
-    let filled = 0;
-    if (sys.name.trim() !== "") filled++;
-    if (sys.inputs.trim() !== "") filled++;
-    if (sys.outputs.trim() !== "") filled++;
-    if (sys.description.trim() !== "") filled++;
-    return (filled / 4) * 100;
-  };
-
   return (
     <div className="space-y-4">
       {systems.length === 0 && (
@@ -114,7 +105,6 @@ export const SystemsForm: React.FC<SystemsFormProps> = ({
       {systems.map((sys, idx) => {
         const isExpanded = expandedSystems.has(idx);
         const isComplete = isSystemComplete(sys);
-        const completionPercentage = getSystemCompletionPercentage(sys);
 
         return (
           <Card

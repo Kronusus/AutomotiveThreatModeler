@@ -8,7 +8,7 @@ import globals from "globals";
 
 export default tseslint.config(
   {
-    ignores: [".next/*", "components/ui/*"],
+    ignores: [".next/*", "components/ui/*", "next-env.d.ts"],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,

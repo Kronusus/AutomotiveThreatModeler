@@ -10,10 +10,9 @@ interface UseCaseFormProps {
 export const UseCaseForm: React.FC<UseCaseFormProps> = ({ value, onChange }) => {
   return (
     <div className="space-y-2">
-          <Label htmlFor="useCase" className="text-base font-semibold">
+      <Label htmlFor="useCase" className="text-base font-semibold">
         Description <span className="text-destructive">*</span>
       </Label>
-      
       <Textarea
         id="use-case-input"
         value={value}
