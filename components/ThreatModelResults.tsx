@@ -112,33 +112,35 @@ export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({
       </div>
 
       {/* Results Table */}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead className="w-[16%] font-semibold text-foreground align-top">Asset</TableHead>
-              <TableHead className="w-[12%] font-semibold text-foreground align-top">Property</TableHead>
-              <TableHead className="w-[10%] font-semibold text-foreground align-top">STRIDE</TableHead>
-              <TableHead className="w-[16%] font-semibold text-foreground align-top">Damage Scenario</TableHead>
-              <TableHead className="font-semibold text-foreground align-top">Reasoning</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {results.map((r, i) => (
-              <TableRow key={i}>
-                <TableCell className="align-top font-normal py-3">{r.asset}</TableCell>
-                <TableCell className="align-top font-normal py-3">{r.property}</TableCell>
-                <TableCell className="align-top py-3">
-                  <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                    {r.stride}
-                  </span>
-                </TableCell>
-                <TableCell className="align-top font-normal py-3">{r.damage}</TableCell>
-                <TableCell className="align-top font-normal py-3">{r.reasoning}</TableCell>
+      <div className="rounded-md border overflow-hidden">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="w-[180px] font-semibold text-foreground align-top">Asset</TableHead>
+                <TableHead className="w-[120px] font-semibold text-foreground align-top">Property</TableHead>
+                <TableHead className="w-[100px] font-semibold text-foreground align-top">STRIDE</TableHead>
+                <TableHead className="w-[200px] font-semibold text-foreground align-top">Damage Scenario</TableHead>
+                <TableHead className="font-semibold text-foreground align-top">Reasoning</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {results.map((r, i) => (
+                <TableRow key={i}>
+                  <TableCell className="align-top font-normal py-3 w-[180px]">{r.asset}</TableCell>
+                  <TableCell className="align-top font-normal py-3 w-[120px]">{r.property}</TableCell>
+                  <TableCell className="align-top py-3 w-[100px]">
+                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                      {r.stride}
+                    </span>
+                  </TableCell>
+                  <TableCell className="align-top font-normal py-3 w-[200px]">{r.damage}</TableCell>
+                  <TableCell className="align-top font-normal py-3">{r.reasoning}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   );
