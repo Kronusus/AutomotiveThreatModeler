@@ -156,7 +156,7 @@ export const SystemsForm: React.FC<SystemsFormProps> = ({
 
                   <div className="flex items-center gap-2 shrink-0">
                     {isComplete && (
-                      <Badge variant="default" className="text-xs">
+                      <Badge variant="secondary" className="text-xs font-medium">
                         Complete
                       </Badge>
                     )}
