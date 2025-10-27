@@ -84,28 +84,28 @@ export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({
         </div>
         
         <div className="flex gap-2">
-          <Button 
-            onClick={onExportPDF} 
-            size="sm"
+          <Button
             variant="outline"
+            size="sm"
+            onClick={onExportPDF}
           >
-            <FileDown className="h-4 w-4 mr-2" />
+            <FileDown className="h-4 w-4" />
             PDF
           </Button>
-          <Button 
-            onClick={onExportJSON} 
-            size="sm"
+          <Button
             variant="outline"
+            size="sm"
+            onClick={onExportJSON}
           >
-            <FileJson className="h-4 w-4 mr-2" />
+            <FileJson className="h-4 w-4" />
             JSON
           </Button>
-          <Button 
-            onClick={onExportCSV} 
-            size="sm"
+          <Button
             variant="outline"
+            size="sm"
+            onClick={onExportCSV}
           >
-            <FileSpreadsheet className="h-4 w-4 mr-2" />
+            <FileSpreadsheet className="h-4 w-4" />
             CSV
           </Button>
         </div>
@@ -116,25 +116,25 @@ export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-[18%]">Asset</TableHead>
-              <TableHead className="w-[11%]">Property</TableHead>
-              <TableHead className="w-[9%]">STRIDE</TableHead>
-              <TableHead className="w-[24%]">Damage Scenario</TableHead>
-              <TableHead className="w-[38%]">Reasoning</TableHead>
+              <TableHead className="w-[16%] font-semibold text-foreground">Asset</TableHead>
+              <TableHead className="w-[12%] font-semibold text-foreground">Property</TableHead>
+              <TableHead className="w-[10%] font-semibold text-foreground">STRIDE</TableHead>
+              <TableHead className="w-[20%] font-semibold text-foreground">Damage Scenario</TableHead>
+              <TableHead className="font-semibold text-foreground">Reasoning</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {results.map((r, i) => (
               <TableRow key={i}>
-                <TableCell className="text-sm">{r.asset}</TableCell>
-                <TableCell className="text-sm">{r.property}</TableCell>
-                <TableCell>
+                <TableCell className="align-top font-normal">{r.asset}</TableCell>
+                <TableCell className="align-top font-normal">{r.property}</TableCell>
+                <TableCell className="align-top">
                   <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                     {r.stride}
                   </span>
                 </TableCell>
-                <TableCell className="text-sm">{r.damage}</TableCell>
-                <TableCell className="text-sm">{r.reasoning}</TableCell>
+                <TableCell className="align-top font-normal">{r.damage}</TableCell>
+                <TableCell className="align-top font-normal">{r.reasoning}</TableCell>
               </TableRow>
             ))}
           </TableBody>

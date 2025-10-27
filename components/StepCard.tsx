@@ -42,8 +42,10 @@ export const StepCard: React.FC<StepCardProps> = ({
   return (
     <Card
       className={cn(
-        "transition-all duration-200",
-        isLocked && "opacity-60",
+        "transition-all duration-300",
+        isActive && "border-primary/30 shadow-md",
+        isComplete && "bg-primary/5",
+        isLocked && "opacity-60 cursor-not-allowed",
         className
       )}
     >
@@ -52,16 +54,16 @@ export const StepCard: React.FC<StepCardProps> = ({
           <div className="flex items-start gap-4 flex-1 min-w-0">
             <div
               className={cn(
-                "flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-semibold text-sm border-2 transition-colors mt-0.5",
+                "flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-semibold text-sm transition-all duration-300 mt-0.5",
                 isComplete
-                  ? "bg-primary text-primary-foreground border-primary"
+                  ? "bg-primary text-primary-foreground shadow-md"
                   : isActive
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-background text-muted-foreground border-muted-foreground/20"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-accent text-accent-foreground border-2 border-border"
               )}
             >
               {isComplete ? (
-                <Check className="h-5 w-5" />
+                <Check className="h-5 w-5 animate-in zoom-in-50" />
               ) : (
                 stepNumber
               )}

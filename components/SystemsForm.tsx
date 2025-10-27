@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +21,7 @@ export const SystemsForm: React.FC<SystemsFormProps> = ({
   const [expandedSystems, setExpandedSystems] = useState<Set<number>>(
     new Set(systems.map((_, idx) => idx))
   );
+  const [focusIndex, setFocusIndex] = useState<number | null>(null);
 
   const handleSystemChange = (
     idx: number,
@@ -41,6 +42,8 @@ export const SystemsForm: React.FC<SystemsFormProps> = ({
     ]);
     // Automatically expand the new system
     setExpandedSystems((prev) => new Set(prev).add(newIndex));
+    // Set focus index to the new system
+    setFocusIndex(newIndex);
   };
 
   const removeSystem = (idx: number) => {
@@ -63,6 +66,19 @@ export const SystemsForm: React.FC<SystemsFormProps> = ({
       return updated;
     });
   };
+
+  // Auto-focus on the name input of newly added system
+  useEffect(() => {
+    if (focusIndex !== null) {
+      const inputElement = document.getElementById(`system-name-${focusIndex}`);
+      if (inputElement) {
+        setTimeout(() => {
+          inputElement.focus();
+          setFocusIndex(null);
+        }, 100);
+      }
+    }
+  }, [focusIndex]);
 
   const isSystemComplete = (sys: System) => {
     return sys.name.trim() !== "" && sys.description.trim() !== "";
@@ -253,14 +269,14 @@ export const SystemsForm: React.FC<SystemsFormProps> = ({
       })}
 
       <Button
+        variant={systems.length === 0 ? "default" : "outline"}
+        size="lg"
         onClick={addSystem}
         type="button"
         id="add-system-btn"
-        variant="outline"
-        size="lg"
         className="w-full"
       >
-        <PlusCircle className="h-5 w-5 mr-2" />
+        <PlusCircle className="h-5 w-5" />
         Add {systems.length > 0 ? "another" : "a"} system
       </Button>
     </div>
