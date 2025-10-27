@@ -6,7 +6,6 @@
 [![React](https://img.shields.io/badge/React-19.1-61dafb?style=for-the-badge&logo=react)](https://react.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38bdf8?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![pnpm](https://img.shields.io/badge/pnpm-10.13-f69220?style=for-the-badge&logo=pnpm)](https://pnpm.io/)
-[![License](https://img.shields.io/badge/License-AGPL%20v3-purple?style=for-the-badge)](LICENSE)
 
 A Next.js web application to assist automotive cybersecurity architects in performing AI-assisted STRIDE threat modeling for vehicle features according to ISO 21434. No authentication or database required—all data is held in client memory for the session.
 
@@ -49,16 +48,6 @@ pnpm dev
 # Open http://localhost:3000 in your browser
 ```
 
-## 📜 Available Scripts
-
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start development server with Turbopack |
-| `pnpm build` | Build optimized production bundle |
-| `pnpm start` | Start production server |
-| `pnpm lint` | Run ESLint code analysis |
-| `pnpm clean` | Clean build cache and temporary files |
-
 ## 📖 Usage Guide
 
 ### Step 1: Define System
@@ -86,20 +75,6 @@ GEMINI_API_KEY=your_api_key_here
 ```
 
 > **Note**: Get your free API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
-
-## 🛠️ Technologies
-
-| Technology | Purpose |
-|------------|---------|
-| **Next.js 15** | React framework with App Router and Turbopack |
-| **TypeScript 5** | Type-safe development |
-| **React 19** | UI rendering |
-| **Tailwind CSS 4** | Utility-first styling |
-| **shadcn/ui** | Accessible component library |
-| **Mermaid** | Diagram rendering and visualization |
-| **Google Generative AI** | AI-powered threat analysis (Gemini) |
-| **pdf-lib** | Client-side PDF generation |
-| **pnpm** | Fast, disk space efficient package manager |
 
 ## 📁 Project Structure
 
@@ -137,27 +112,6 @@ AutomotiveThreatModeler/
 ├── package.json          # Dependencies and scripts
 ├── tailwind.config.js    # Tailwind CSS configuration
 └── tsconfig.json         # TypeScript configuration
-```
-
-## 🤝 Contributing
-
-Contributions are welcome! This project uses **pnpm** exclusively.
-
-```bash
-# Install pnpm globally
-npm install -g pnpm@latest
-
-# Fork the repository and clone your fork
-git clone https://github.com/YOUR_USERNAME/AutomotiveThreatModeler.git
-
-# Create a feature branch
-git checkout -b feature/amazing-feature
-
-# Make your changes and commit
-git commit -m "Add amazing feature"
-
-# Push to your fork and submit a pull request
-git push origin feature/amazing-feature
 ```
 
 ## 📄 License
