@@ -287,10 +287,36 @@ export async function exportPDF(data: ExportData): Promise<Uint8Array> {
     return lines.length > 0 ? lines : [''];
   }
   
-  // Header
+  // Table of Contents Page
   drawTitle("Automotive Threat Model Report", 24);
-  y -= 10;
+  y -= 20;
   drawSeparator();
+  
+  drawTitle("Table of Contents", 18);
+  y -= 10;
+  
+  drawText("1. System Definition", 11);
+  drawText("   - Use Case", 10, 15);
+  drawText("   - Effect Chain", 10, 15);
+  drawText("   - Systems Overview", 10, 15);
+  y -= 5;
+  
+  drawText("2. System Architecture Diagram", 11);
+  y -= 5;
+  
+  drawText("3. Threat Analysis Results", 11);
+  drawText(`   - ${results.length} threat${results.length !== 1 ? 's' : ''} identified`, 10, 15);
+  y -= 20;
+  
+  drawText("Generated on: " + new Date().toLocaleString(), 9);
+  
+  // Start System Definition on a new page
+  page = pdfDoc.addPage();
+  y = height - margin;
+  
+  // System Definition Section Title (Blue)
+  drawTitle("System Definition", 16);
+  y -= 5;
   
   // Use Case Section as Table
   drawHeading("Use Case");
@@ -348,15 +374,15 @@ export async function exportPDF(data: ExportData): Promise<Uint8Array> {
     y -= 10;
   }
   
-  // Diagram Section
-  drawSeparator();
-  drawHeading("System Architecture Diagram");
-  y -= 5;
+  // Start System Architecture Diagram on a new page
+  page = pdfDoc.addPage();
+  y = height - margin;
+  
+  // System Diagram Section Title (Blue)
+  drawTitle("System Architecture Diagram", 16);
+  y -= 10;
   
   if (diagram) {
-    drawText("Diagram Source (Mermaid):", 10);
-    y -= 5;
-    
     // Draw diagram code in a box
     const diagramLines = diagram.split('\n');
     const boxHeight = Math.min(diagramLines.length * 12 + 20, 200);
@@ -391,7 +417,9 @@ export async function exportPDF(data: ExportData): Promise<Uint8Array> {
     y -= 10;
   }
   
-  drawSeparator();
+  // Start Threat Analysis Results on a new page
+  page = pdfDoc.addPage();
+  y = height - margin;
   
   // Threats Section - Each threat as its own table
   drawTitle("Threat Analysis Results", 18);

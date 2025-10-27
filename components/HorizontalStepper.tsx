@@ -71,8 +71,6 @@ export const HorizontalStepper: React.FC<HorizontalStepperProps> = ({
                 >
                   {step.isComplete ? (
                     <Check className="h-6 w-6 animate-in zoom-in-50 duration-200" />
-                  ) : step.isActive ? (
-                    <Circle className="h-4 w-4 fill-current animate-pulse" />
                   ) : (
                     <span className="text-base font-semibold">{step.id}</span>
                   )}

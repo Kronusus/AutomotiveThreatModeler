@@ -116,25 +116,25 @@ export const ThreatModelResults: React.FC<ThreatModelResultsProps> = ({
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-[16%] font-semibold text-foreground">Asset</TableHead>
-              <TableHead className="w-[12%] font-semibold text-foreground">Property</TableHead>
-              <TableHead className="w-[10%] font-semibold text-foreground">STRIDE</TableHead>
-              <TableHead className="w-[20%] font-semibold text-foreground">Damage Scenario</TableHead>
-              <TableHead className="font-semibold text-foreground">Reasoning</TableHead>
+              <TableHead className="w-[16%] font-semibold text-foreground align-top">Asset</TableHead>
+              <TableHead className="w-[12%] font-semibold text-foreground align-top">Property</TableHead>
+              <TableHead className="w-[10%] font-semibold text-foreground align-top">STRIDE</TableHead>
+              <TableHead className="w-[16%] font-semibold text-foreground align-top">Damage Scenario</TableHead>
+              <TableHead className="font-semibold text-foreground align-top">Reasoning</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {results.map((r, i) => (
               <TableRow key={i}>
-                <TableCell className="align-top font-normal">{r.asset}</TableCell>
-                <TableCell className="align-top font-normal">{r.property}</TableCell>
-                <TableCell className="align-top">
+                <TableCell className="align-top font-normal py-3">{r.asset}</TableCell>
+                <TableCell className="align-top font-normal py-3">{r.property}</TableCell>
+                <TableCell className="align-top py-3">
                   <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                     {r.stride}
                   </span>
                 </TableCell>
-                <TableCell className="align-top font-normal">{r.damage}</TableCell>
-                <TableCell className="align-top font-normal">{r.reasoning}</TableCell>
+                <TableCell className="align-top font-normal py-3">{r.damage}</TableCell>
+                <TableCell className="align-top font-normal py-3">{r.reasoning}</TableCell>
               </TableRow>
             ))}
           </TableBody>

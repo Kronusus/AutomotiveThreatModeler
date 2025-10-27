@@ -54,12 +54,12 @@ export const StepCard: React.FC<StepCardProps> = ({
           <div className="flex items-start gap-4 flex-1 min-w-0">
             <div
               className={cn(
-                "flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-semibold text-sm transition-all duration-300 mt-0.5",
+                "flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-bold text-base transition-all duration-300 mt-0.5 border-2",
                 isComplete
-                  ? "bg-primary text-primary-foreground shadow-md"
+                  ? "bg-primary text-primary-foreground border-primary shadow-md"
                   : isActive
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-accent text-accent-foreground border-2 border-border"
+                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                  : "bg-background text-foreground border-muted-foreground/50"
               )}
             >
               {isComplete ? (
@@ -89,11 +89,16 @@ export const StepCard: React.FC<StepCardProps> = ({
           </Button>
         </div>
       </CardHeader>
-      {!collapsed && (
+      <div
+        className={cn(
+          "overflow-hidden transition-all duration-300 ease-in-out",
+          collapsed ? "max-h-0 opacity-0" : "max-h-[5000px] opacity-100"
+        )}
+      >
         <CardContent className="pt-0 pb-6">
           {children}
         </CardContent>
-      )}
+      </div>
     </Card>
   );
 };

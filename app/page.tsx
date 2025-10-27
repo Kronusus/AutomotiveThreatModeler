@@ -11,7 +11,7 @@ import { StepCard } from "@/components/StepCard";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, FileText, Sparkles, Shield, ChevronDown, CheckCircle2, RotateCcw, AlertCircle } from "lucide-react";
+import { Loader2, FileText, Sparkles, Shield, ChevronDown, CheckCircle2, AlertCircle, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useVisualization, useThreatModeling, exportThreatModel } from "@/lib/hooks";
 import { EffectChain, System } from "@/lib/types";
@@ -114,21 +114,6 @@ export default function HomePage() {
     }
   };
 
-  const handleReset = () => {
-    if (confirm("Are you sure you want to reset all data? This action cannot be undone.")) {
-      setUseCase("");
-      setEffectChain({ input: "", coreLogic: "", output: "" });
-      setSystems([]);
-      setDiagram("");
-      setCollapsed1(false);
-      setCollapsed2(false);
-      setCollapsed3(false);
-      toast.info("Data reset", {
-        description: "All fields have been cleared. Start fresh!"
-      });
-    }
-  };
-
   const canGenerateVisualization = useCase.trim() !== "" && systems.length > 0;
   const hasDiagram = Boolean(diagram);
   const hasResults = results.length > 0;
@@ -159,18 +144,6 @@ export default function HomePage() {
     // placeholder for side-effects when stage changes
   }, [currentStage]);
 
-  // Auto-collapse completed steps and expand current step
-  useEffect(() => {
-    if (hasDiagram && !collapsed2) {
-      // When diagram is generated, collapse step 1
-      setCollapsed1(true);
-    }
-    if (hasResults && !collapsed3) {
-      // When results are generated, collapse step 2
-      setCollapsed2(true);
-    }
-  }, [hasDiagram, hasResults, collapsed2, collapsed3]);
-
   return (
     <>
       {/* Header - Fixed */}
@@ -189,19 +162,6 @@ export default function HomePage() {
                   STRIDE Methodology for Vehicle Security
                 </p>
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              {(useCase || systems.length > 0 || diagram || results.length > 0) && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleReset}
-                  title="Reset all data and start over"
-                >
-                  <RotateCcw className="h-4 w-4" />
-                  <span className="hidden sm:inline ml-2">Reset</span>
-                </Button>
-              )}
             </div>
           </div>
         </div>
@@ -262,20 +222,23 @@ export default function HomePage() {
                   {/* Primary action at bottom */}
                   <div className="flex items-center justify-between pt-4 border-t">
                     <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">
-                        {canGenerateVisualization ? "Ready to proceed to visualization!" : "Complete the use case and add at least one system to proceed."}
+                      <p className="text-sm text-muted-foreground flex items-center gap-2">
+                        {canGenerateVisualization ? (
+                          "Ready to proceed to visualization!"
+                        ) : (
+                          <>
+                            <AlertCircle className="h-4 w-4" />
+                            {!useCase.trim() && systems.length === 0
+                              ? "Missing use case and system"
+                              : !useCase.trim()
+                              ? "Missing use case"
+                              : "Add at least one system to proceed"}
+                          </>
+                        )}
                       </p>
-                      {!canGenerateVisualization && !useCase.trim() && (
-                        <div className="flex items-center gap-2 mt-2">
-                          <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-xs text-muted-foreground">
-                            Missing use case
-                          </span>
-                        </div>
-                      )}
                     </div>
                     <Button
-                      variant={canGenerateVisualization ? "default" : "secondary"}
+                      variant="default"
                       size="lg"
                       onClick={() => {
                         if (canGenerateVisualization) {
@@ -298,7 +261,6 @@ export default function HomePage() {
                       )}
                       title={canGenerateVisualization ? "Proceed to next step" : "Complete required fields first"}
                     >
-                      {canGenerateVisualization && <CheckCircle2 className="h-4 w-4" />}
                       Continue
                       <ChevronDown className="h-4 w-4 -rotate-90" />
                     </Button>
@@ -337,9 +299,11 @@ export default function HomePage() {
 
                   {/* Actions */}
                   <div className="flex items-center justify-between pt-6 border-t">
-                    <p className="text-sm text-muted-foreground">
-                      {diagram ? "Edit the diagram or proceed to threat analysis." : "Generate the visualization to continue."}
-                    </p>
+                    <div className="flex-1">
+                      <p className="text-sm text-muted-foreground">
+                        {diagram ? "Edit the diagram or proceed to threat analysis." : "Generate the visualization to continue."}
+                      </p>
+                    </div>
                     <div className="flex items-center gap-3">
                       {diagram && (
                         <Button
@@ -348,7 +312,6 @@ export default function HomePage() {
                           onClick={handleGenerateVisualization}
                           disabled={diagramLoading}
                           title="Generate a new diagram with current data"
-                          className="min-w-[160px] shadow-lg shadow-muted/10 hover:shadow-xl hover:shadow-muted/20 transition-all"
                         >
                           {diagramLoading ? (
                             <>
@@ -403,7 +366,6 @@ export default function HomePage() {
                           className="min-w-[140px] shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all"
                           title="Proceed to threat analysis"
                         >
-                          <CheckCircle2 className="h-4 w-4" />
                           Continue
                           <ChevronDown className="h-4 w-4 -rotate-90" />
                         </Button>
@@ -450,14 +412,6 @@ export default function HomePage() {
                       <p className="text-sm text-muted-foreground">
                         {hasResults ? "Review the threat analysis results and export if needed." : "Run the STRIDE analysis to identify security threats."}
                       </p>
-                      {!hasResults && canPerformThreatModeling && (
-                        <div className="flex items-center gap-2 mt-2">
-                          <Shield className="h-4 w-4 text-primary" />
-                          <span className="text-xs text-primary font-medium">
-                            Ready to analyze threats
-                          </span>
-                        </div>
-                      )}
                     </div>
                     <Button
                       variant={hasResults ? "outline" : "default"}

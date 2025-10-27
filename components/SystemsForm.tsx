@@ -269,7 +269,7 @@ export const SystemsForm: React.FC<SystemsFormProps> = ({
       })}
 
       <Button
-        variant={systems.length === 0 ? "default" : "outline"}
+        variant="outline"
         size="lg"
         onClick={addSystem}
         type="button"
