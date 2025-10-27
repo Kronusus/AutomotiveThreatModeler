@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+/test-results
 
 # next.js
 /.next/
@@ -41,5 +42,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-
-pnpm-lock.yaml
+# lock files (keep pnpm-lock.yaml in repo)
+package-lock.json
+yarn.lock

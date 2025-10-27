@@ -1,4 +1,4 @@
-import { ThreatModelResult } from "../components/ThreatModelResults";
+import { ThreatModelResult } from "@/lib/types";
 
 export function validateThreatModel(results: any): results is ThreatModelResult[] {
   return Array.isArray(results) && results.every(r =>

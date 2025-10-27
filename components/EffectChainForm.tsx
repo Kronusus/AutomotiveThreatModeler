@@ -1,4 +1,7 @@
 import * as React from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { ArrowDownCircle, Cpu, ArrowUpCircle } from "lucide-react";
 
 interface EffectChainValue {
   input: string;
@@ -14,62 +17,56 @@ interface EffectChainFormProps {
 export const EffectChainForm: React.FC<EffectChainFormProps> = ({
   value,
   onChange,
-}) => (
-  <div className="card shadow-md p-6 mb-6">
-    <h3 className="block text-lg font-bold mb-4 text-foreground/80">
-      Effect Chain
-    </h3>
-    <div className="space-y-4">
-      <div>
-        <label
-          htmlFor="effect-chain-input"
-          className="block text-sm font-bold mb-1 text-foreground/70"
-        >
+}) => {
+  return (
+    <div className="space-y-6">
+      {/* Input */}
+      <div className="space-y-2">
+        <Label htmlFor="effect-chain-input" className="text-sm font-medium flex items-center gap-2">
+          <ArrowDownCircle className="h-4 w-4 text-foreground" />
           Input
-        </label>
-        <textarea
+        </Label>
+        <Textarea
           id="effect-chain-input"
-          className="input w-full"
           value={value.input}
           onChange={(e) => onChange({ ...value, input: e.target.value })}
-          placeholder="List all overall inputs for the respective use case"
-          rows={2}
+          placeholder="e.g., Driver Brake Request, Pedal Position Sensor"
+          rows={3}
+          className="resize-none text-sm"
         />
       </div>
-      <div>
-        <label
-          htmlFor="effect-chain-core-logic"
-          className="block text-sm font-bold mb-1 text-foreground/70"
-        >
-          Core Logic
-        </label>
-        <textarea
+
+      {/* Core Logic */}
+      <div className="space-y-2">
+        <Label htmlFor="effect-chain-core-logic" className="text-sm font-medium flex items-center gap-2">
+          <Cpu className="h-4 w-4 text-foreground" />
+          Core Logic / Processing
+        </Label>
+        <Textarea
           id="effect-chain-core-logic"
-          className="input w-full"
           value={value.coreLogic}
-          onChange={(e) =>
-            onChange({ ...value, coreLogic: e.target.value })
-          }
-          placeholder="Describe the general logic that processes the input to derive the output"
-          rows={2}
+          onChange={(e) => onChange({ ...value, coreLogic: e.target.value })}
+          placeholder="e.g., Calculate braking force, Apply ABS algorithm"
+          rows={3}
+          className="resize-none text-sm"
         />
       </div>
-      <div>
-        <label
-          htmlFor="effect-chain-output"
-          className="block text-sm font-bold mb-1 text-foreground/70"
-        >
+
+      {/* Output */}
+      <div className="space-y-2">
+        <Label htmlFor="effect-chain-output" className="text-sm font-medium flex items-center gap-2">
+          <ArrowUpCircle className="h-4 w-4 text-foreground" />
           Output
-        </label>
-        <textarea
+        </Label>
+        <Textarea
           id="effect-chain-output"
-          className="input w-full"
           value={value.output}
           onChange={(e) => onChange({ ...value, output: e.target.value })}
-          placeholder="List all outputs of the respective use case"
-          rows={2}
+          placeholder="e.g., Vehicle Deceleration, Brake Actuator Commands"
+          rows={3}
+          className="resize-none text-sm"
         />
       </div>
     </div>
-  </div>
-);
+  );
+};
