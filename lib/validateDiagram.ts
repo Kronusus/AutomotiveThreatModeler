@@ -10,7 +10,7 @@ export function validateAndSanitizeDiagram(diagram: string): { valid: boolean, s
   }
   // Remove problematic characters from node labels (parentheses, special chars)
   sanitized = sanitized.replace(/\(([^)]*)\)/g, ""); // Remove parentheses and contents
-  sanitized = sanitized.replace(/[^\w\s->{}\[\];:|,.]/g, ""); // Remove unsupported special chars
+  sanitized = sanitized.replace(/[^\w\s->{}[\];:|,.]/g, ""); // Remove unsupported special chars
   // Relaxed arrow syntax check: allow any --, -->, --- etc.
   // Only fail if there are unfinished arrows (e.g., -- at end of line)
   if (/--\s*$/m.test(sanitized)) {

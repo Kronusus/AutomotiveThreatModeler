@@ -1,22 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
-import { exportPDF, exportCSV } from "../../../lib/exporters";
+import { exportPDF, exportCSV, exportJSON } from "../../../lib/exporters";
 
 export async function POST(req: NextRequest) {
   try {
     const { useCase, effectChain, systems, diagram, results } = await req.json();
     const type = req.nextUrl.searchParams.get("type");
-    let fileBuffer: Uint8Array, mime: string, filename: string;
+    
+    let fileBuffer: Uint8Array;
+    let mime: string;
+    let filename: string;
+    
+    const data = { useCase, effectChain, systems, diagram, results };
+    
     if (type === "pdf") {
-      fileBuffer = await exportPDF({ useCase, effectChain, systems, diagram, results });
+      fileBuffer = await exportPDF(data);
       mime = "application/pdf";
       filename = "threatmodel.pdf";
+    } else if (type === "json") {
+      fileBuffer = await exportJSON(data);
+      mime = "application/json";
+      filename = "threatmodel.json";
     } else {
-      fileBuffer = await exportCSV({ useCase, effectChain, systems, diagram, results });
+      fileBuffer = await exportCSV(data);
       mime = "text/csv";
       filename = "threatmodel.csv";
     }
-  const arrayBuffer = fileBuffer instanceof Uint8Array ? fileBuffer.buffer as ArrayBuffer : fileBuffer as ArrayBuffer;
-  return new NextResponse(new Blob([arrayBuffer]), {
+    
+    const arrayBuffer = fileBuffer instanceof Uint8Array ? fileBuffer.buffer as ArrayBuffer : fileBuffer as ArrayBuffer;
+    return new NextResponse(new Blob([arrayBuffer]), {
       status: 200,
       headers: {
         "Content-Type": mime,
